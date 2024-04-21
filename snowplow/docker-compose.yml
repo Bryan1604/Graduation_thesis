@@ -1,15 +1,21 @@
-version: '1'
+
 networks:
   snowplow:
 services:
   zookeeper:
     container_name: zookeeper
-    image: confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:7.4.0
+    hostname: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
-      - 22181:2181
+      - 2181:2181
+    healthcheck:
+      test: ["CMD", "bash", "-c", "echo 'ruok' | nc localhost 2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - snowplow
 
@@ -30,22 +36,22 @@ services:
     networks:
       - snowplow
 
-  kafka2:
-    container_name: kafka2
-    image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper
-    ports:
-      - 29093:29093
-    environment:
-      KAFKA_BROKER_ID: 2
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9093,PLAINTEXT_HOST://localhost:29093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
-    networks:
-      - snowplow
+  # kafka2:
+  #   container_name: kafka2
+  #   image: confluentinc/cp-kafka:latest
+  #   depends_on:
+  #     - zookeeper
+  #   ports:
+  #     - 29093:29093
+  #   environment:
+  #     KAFKA_BROKER_ID: 2
+  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9093,PLAINTEXT_HOST://localhost:29093
+  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
+  #   networks:
+  #     - snowplow
 
   scala-stream-collector:
     container_name: collector
@@ -79,6 +85,21 @@ services:
     networks:
       - snowplow
 
+  postgresdb:
+      image: postgres
+      container_name: my-postgres
+      ports:
+        - "5432:5432"
+      environment:
+        POSTGRES_DB: igludb
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: snowplow
+      volumes:
+        - ./iglu-server-config/init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./postgres-data:/var/lib/postgresql/data
+      networks:
+        - snowplow
+
   iglu-server:
     container_name: iglu-server
     image: snowplow/iglu-server:0.10.0
@@ -91,20 +112,19 @@ services:
     command: "--config /iglu/config.hocon"
     networks:
       - snowplow
-  postgresdb:
-    image: postgres
-    container_name: my-postgres
-    ports:
-      - "5432:5432"
+
+  db:
+    image: mysql
+    restart: always
     environment:
-      POSTGRES_DB: igludb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: snowplow
+      MYSQL_ROOT_PASSWORD: 12345678
+      MYSQL_DATABASE: CDP
+      # MYSQL_USER: root
+      # MYSQL_PASSWORD: 12345678
+    ports:
+      - "3306:3306"
     volumes:
-      - ./iglu-server-config/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./postgres-data:/var/lib/postgresql/data
-    networks:
-      - snowplow
+      - ./data:/var/lib/mysql
   # iglu-server:
   #   image: dinhphu/snowplow-iglu:1.0.0
   #   container_name: iglu-server

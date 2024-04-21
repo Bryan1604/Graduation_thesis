@@ -1,0 +1,42 @@
+PUT /customer_data_platform 
+{
+  "mappings": {
+    "properties": {
+      "event_id" : {
+        "type": "text"
+      },
+      "time" : {
+        "type": "date"
+      },
+      "user_id" :{
+        "type": "integer"
+      },
+      "domain_userid": {
+        "type": "text"
+      },
+      "event_type": {
+        "type": "text"
+      },
+      "products": {
+        "type": "nested",
+        "properties": {
+          "product_id" : {
+            "type" : "integer"
+          },
+          "product_name" : {
+            "type" : "text"
+          },
+          "price" : {
+            "type" : "integer"
+          },
+          "quantity" : {
+            "type": "integer"
+          },
+          "category_id": {
+            "type" : "integer"
+          }
+        }
+      }
+    }
+  }
+}

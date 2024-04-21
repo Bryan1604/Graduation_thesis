@@ -53,7 +53,7 @@ const customerController = {
       } else {
         const hashedPassword = await bcrypt.hash(password, 10);
         const insertSql = "INSERT INTO customers (name, email, phone, password, role) VALUES (?, ?, ?, ?, ?)";
-        const [rows, fields] = await connection.promise().query(insertSql, [name, email, phone, hashedPassword, role]);
+        const [rows, fields] = await connection.promise().query(insertSql, [name, email, phone, password, role]);
         res.json({
           data: rows,
         });
@@ -107,7 +107,7 @@ const customerController = {
         const storedPasswordHash = rows[0].password;
 
         // So sánh mật khẩu
-        const passwordMatch = await bcrypt.compare(password, storedPasswordHash);
+        // const passwordMatch = await bcrypt.compare(password, storedPasswordHash);
 
 
         if (password == storedPasswordHash) {

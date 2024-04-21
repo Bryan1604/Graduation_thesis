@@ -35,6 +35,7 @@ export default function Login() {
         const response = await login(values);
 
         // Kiểm tra xem đăng nhập có thành công không
+        console.log(response);
         const role = response.user.role;
         if (role && role.toLowerCase() === "user") {
           // Nếu thành công, chuyển hướng đến trang Home
