@@ -1,0 +1,11 @@
+# Bỏ qua tất cả các tệp .log
+*.log
+
+# Bỏ qua thư mục build
+/build
+
+# Bỏ qua tất cả các tệp trong thư mục temp, nhưng không bao gồm temp/important.log
+temp/*
+!temp/important.log
+
+data/*
