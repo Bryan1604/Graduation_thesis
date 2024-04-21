@@ -19,3 +19,7 @@ port :
 
 Cac bươc thuc hien hien:
 - Lay du lieu tu kafka lưu vao elasticsearch elasticsearch, từ elasticseach tính toán để lưu vào db
+
+lý do ko chạy được postgress -> mount sai : ./snowplow/postgres-data:/var/lib/postgresql/data .
+ Phải là : ./snowplow/postgres-data:/var/lib/postgresql@14/data
+ Do tải xuống là bản postgresql@14 đổi tên từ postgresql :v
