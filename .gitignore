@@ -8,4 +8,6 @@
 temp/*
 !temp/important.log
 
-data/*
+/data
+/snowplow/postgres-data
+/iglu-server-config
