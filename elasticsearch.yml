@@ -1,0 +1,14 @@
+cluster.name: streaming_event
+node.name: elasticsearch
+network.host: 0.0.0.0
+http.port: 9200
+
+# Thiết lập chỉ mục mặc định
+index:
+  name: streaming_event
+  number_of_shards: 1
+  number_of_replicas: 1
+  # mapping:
+  #   total_fields:
+  #     limit: 10000
+

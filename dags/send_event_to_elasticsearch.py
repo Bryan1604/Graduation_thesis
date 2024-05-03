@@ -1,135 +1,155 @@
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import from_json, col
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, ArrayType
-from pyspark.streaming import StreamingContext
+import os
+from kafka import KafkaConsumer, TopicPartition
+import json
+import re
+from elasticsearch import Elasticsearch
 
-# class KafkaManager:
-#     def __init__(self, bootstrapServers, group_id, auto_offset_reset, topic):
-#         self.bootstrapServers = bootstrapServers
-#         self.group_id = group_id
-#         self.auto_offset_reset = auto_offset_reset
-#         self.topic = topic
+KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:29092")
+KAFKA_TOPIC_TEST = os.environ.get("KAFKA_TOPIC_TEST", "enriched")
+KAFKA_API_VERSION = os.environ.get("KAFKA_API_VERSION", "7.3.1")
 
-# class SparkManager:
-#     def __init__(self, app_name):
-#         self.app_name = app_name
-    
-#     def create_spark_session(app_name):
-#         return SparkSession.builder \
-#             .appName(app_name) \
-#             .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.1,org.mongodb.spark:mongo-spark-connector_2.12:3.0.1") \
-#             .getOrCreate()
-    
-#     def read_from_kafka(spark, bootstrap_servers, topic):
-#         return spark \
-#             .readStream \
-#             .format("kafka") \
-#             .option("kafka.bootstrap.servers",bootstrap_servers) \
-#             .option("subscribe", topic) \
-#             .load()
-    
-#     def write_to_elasticsearch(sourceDF, elasticsearch_host, elasticsearch_port, checkpoint_location):
-#         sourceDF.writeStream \
-#         .format("org.elasticsearch.spark.sql") \
-#         .option("es.nodes", elasticsearch_host) \
-#         .option("es.port", elasticsearch_port) \
-#         .option("checkpointLocation", checkpoint_location) \
-#         .start("index_name/") \
-#         .awaitTermination()
+es = Elasticsearch(["http://localhost:9200"])
+index_name = "streaming_event"
+file_path = 'data.txt'
+
+#Load last commited offset from a file
+def load_offset():
+    try: 
+        with open('offset.txt', 'r') as file:
+            offset_value = file.read().strip()
+            return int(offset_value) if offset_value else None
+    except FileNotFoundError:
+        return None
+
+#Save last commited offset to a file
+def save_offset(offset):
+    with open('offset.txt', 'w') as file:
+        file.write(str(offset))
         
+consumer = KafkaConsumer(
+    KAFKA_TOPIC_TEST,
+    bootstrap_servers=[KAFKA_BOOTSTRAP_SERVERS],
+    api_version=KAFKA_API_VERSION,
+    auto_offset_reset="earliest",
+    # enable_auto_commit=True,
+    enable_auto_commit=False,
+)
 
-# khởi tạo 1 chương trình ảo đầy dữ liệu từ kafka vào elasticsearch để demo
+# load last commited offset
+last_offset = load_offset()
+if last_offset is not None:
+    for partition in consumer.partitions_for_topic(KAFKA_TOPIC_TEST):
+        tp = TopicPartition(KAFKA_TOPIC_TEST, partition)
+        consumer.seek(tp, last_offset)
 
-# Định nghĩa checkpoint location
-checkpoint_location = "/tmp/checkpoint_location"
+def find_json_strings(data):
+    json_strings = []
+    start = data.find('{')
+    while start != -1:
+        counter = 1
+        end = start + 1
+        while counter > 0 and end < len(data):
+            if data[end] == '{':
+                counter += 1
+            elif data[end] == '}':
+                counter -= 1
+            end += 1
+        if counter == 0:
+            json_strings.append(data[start:end])
+        start = data.find('{', end)
+    return json_strings
 
-# khởi tạo 1 phiên spark session
-def create_spark_session(app_name):
-    return  SparkSession.builder \
-                .appName(app_name) \
-                .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.1.1,org.mongodb.spark:mongo-spark-connector_2.12:3.0.1") \
-                .getOrCreate()
+def connect_elasticsearch():
+    if not es.indices.exists(index=index_name):
+        index_setting = {
+            "settings": {
+                "number_of_shards": 1,
+                "number_of_replicas": 0
+            },
+            "mappings": {
+                "properties": {
+                    "event_id": {"type": "keyword"},
+                    "time": {
+                        "type": "date",
+                        "format": "yyyy-MM-dd HH:mm:ss.SSS"},
+                    "user_id": {"type": "keyword"},
+                    "user_name": {"type": "keyword"},
+                    "phone_number": {"type": "keyword"},
+                    "email": {"type": "keyword"},
+                    "event_type": {"type": "keyword"},
+                    "domain_userid": {"type": "keyword"},
+                    "products": {
+                        "properties": {
+                            "product_id": {"type": "keyword"},
+                            "product_name": {"type": "keyword"},
+                            "price": {"type": "float"},
+                            "quantity": {"type": "integer"},
+                            "size": {"type": "keyword"},
+                            "category": {"type": "keyword"},
+                        }
+                    }
+                }
+            }
+        }
+        try:
+            es.indices.create(index=index_name, body=index_setting)
+            print(f"Index {index_name} created successfully")
+        except Exception as e:
+            print(f"Failed to create index {index_name}: {e}")
 
-# đọc dữ liệu từ kafka , tra ve dataframe
-def read_from_kafka(spark, bootstrap_servers, topic):
-    schema_event = StructType([
-        StructField("event_id", StringType(), True),
-        StructField("time", StringType(), True),
-        StructField("user_id", IntegerType(), True),
-        StructField("domain_userid", StringType(), True),
-        StructField("event_type", StringType(), True),
-        StructField("products", ArrayType(
-            StructType([
-                StructField("product_id", IntegerType(), True),
-                StructField("product_name", StringType(), True),
-                StructField("price", IntegerType(), True),
-                StructField("quantity", IntegerType(), True),
-                StructField("category_id", IntegerType(), True)
-            ])
-        ), True)
-    ])
-    
-    # Đọc dữ liệu từ Kafka và chuyển đổi thành DataFrame
-    kafka_df = spark \
-        .readStream \
-        .format("kafka") \
-        .option("kafka.bootstrap.servers", bootstrap_servers) \
-        .option("subscribe", topic) \
-        .load()
-        
-    # Chuyển đổi dữ liệu theo schema đã định nghĩa
-    transformed_df = transform_data(kafka_df, schema_event)
-    return transformed_df
+connect_elasticsearch()
 
-# chuyển đổi dữ liệu theo schema
-def transform_data(data, schema):
-    return data.selectExpr("CAST(value AS STRING)") \
-        .select(from_json(col("value"), schema).alias("data")) \
-        .select("data.*")    
+with open(file_path, "a") as json_file:
+    while True:
+        for message in consumer:
+            
+            # Lấy dữ liệu từ Kafka message
+            data = message.value.decode("utf-8")
+            # Parse dữ liệu thành JSON object
+            json_file.write( '---------------\n')
+            print('---------------\n')
+            split_data = data.split('\t')
+            # Xóa kí tự xuống dòng và kí tự trắng từ cả hai phía của mỗi phần tử
+            clean_data = [item.strip() for item in split_data]
 
-# ghi trưc tiếp vào elastic search
-def write_to_elasticsearch(sourceDF, elasticsearch_host, elasticsearch_port, checkpoint_location, index_name):
-    sourceDF.writeStream \
-    .format("org.elasticsearch.spark.sql") \
-    .option("es.nodes", elasticsearch_host) \
-    .option("es.port", elasticsearch_port) \
-    .option("checkpointLocation", checkpoint_location) \
-    .start(index_name) \
-    .awaitTermination()
-
-def main():
-    spark_session = create_spark_session("event_treaming")
-    
-    # Tạo một Streaming Context với batch interval là 5 giây
-    scc = StreamingContext(spark_session.sparkContext, 5)
-
-    # Đặt cấu hình Kafka
-    kafka_param = {
-        "bootstrap.servers": "localhost:9092",
-        "auto.offset.reset" : "latest",
-        "group_id" : "consumer-group",
-        "topic": "events"
-    }
-
-    # Đọc dữ liệu từ Kafka
-    transformed_data = read_from_kafka(spark_session,"localhost:9092", "events")
-    transformed_data.write \
-        .format("org.elasticsearch.spark.sql") \
-        .option("es.nodes", "your_elasticsearch_host") \
-        .option("es.port", "9200") \
-        .option("es.resource", "your_index_name/your_document_type") \
-        .option("es.mapping.id", "event_id") \
-        .save()
-        
-    # ghi vao elastic search
-    write_to_elasticsearch(
-        sourceDF=transformed_data,  # DataFrame chứa dữ liệu cần ghi
-        elasticsearch_host="localhost",  # Địa chỉ host của Elasticsearch
-        elasticsearch_port="9200",  # Cổng Elasticsearch
-        checkpoint_location=checkpoint_location,  # Vị trí checkpoint
-        index_name="events"  # Tên index mà bạn muốn ghi dữ liệu vào
-    )
-
-
-if __name__ == "__main__":
-    main()
+            # Lọc ra các phần tử không rỗng
+            clean_data = [item for item in clean_data if item]
+            
+            jsonStrings = find_json_strings(data)
+            
+            user_info = json.loads(jsonStrings[0])["data"][2]["data"] if len(jsonStrings) > 0 and len(json.loads(jsonStrings[0])["data"]) > 2 else {}
+            event_info = json.loads(jsonStrings[1])["data"]["data"]
+            product_info = json.loads(jsonStrings[0])["data"][0]["data"]
+            
+            if(len(jsonStrings) >1):
+                event_data = {
+                    "event_id": clean_data[6],
+                    "time": clean_data[2],
+                    "user_id": user_info.get("user_id"),
+                    "user_name": user_info.get("user_name"),
+                    "phone_number": user_info.get("phone_number"),
+                    "email": user_info.get("email"),
+                    "event_type": event_info["action"],
+                    "domain_userid": clean_data[12] if user_info.get("user_id") == None else clean_data[13] ,
+                    "products" : {
+                        "product_id" : product_info["id"],
+                        "product_name" : product_info["name"],
+                        "price" : product_info["price"],
+                        "quantity" : product_info.get("quantity"),
+                        "size" : product_info.get("size"),
+                        "category": product_info["category"],
+                    }
+                }
+             
+                print(event_data)
+                try:
+                    es.index(index=index_name, body=event_data)
+                    print(f"document indexed successfully")
+                except Exception as e:
+                    print(f"Failed to index document: {e}")
+                es.indices.refresh(index=index_name)
+                # json_file.write(json.dumps(event_data, indent=4))
+                
+            save_offset(message.offset)
+            
+  

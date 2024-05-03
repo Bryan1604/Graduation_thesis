@@ -1,0 +1,129 @@
+---------------
+{
+    "event_id": "d34be151-734f-4147-a36d-2c345958965c",
+    "time": "2024-05-03 06:59:13.371",
+    "user_id": null,
+    "user_name": null,
+    "phone_number": null,
+    "email": null,
+    "event_type": "view",
+    "domain_userid": "1cf77f49-fb46-43f0-a2d1-1dbc17a49ac0",
+    "products": {
+        "product_id": "2",
+        "product_name": "T shirt",
+        "price": 111111,
+        "quantity": null,
+        "size": null,
+        "category": "\u00c1o ph\u00f4ng n\u1eef"
+    }
+}---------------
+{
+    "event_id": "2795203f-5e04-4913-b5e4-5153b78a053a",
+    "time": "2024-05-03 07:56:07.245",
+    "user_id": null,
+    "user_name": null,
+    "phone_number": null,
+    "email": null,
+    "event_type": "add",
+    "domain_userid": "1cf77f49-fb46-43f0-a2d1-1dbc17a49ac0",
+    "products": {
+        "product_id": "2",
+        "product_name": "T shirt",
+        "price": 111111,
+        "quantity": 1,
+        "size": "XXL",
+        "category": "\u00c1o ph\u00f4ng n\u1eef"
+    }
+}---------------
+{
+    "event_id": "eefead77-4154-4164-8d29-d8deed0d6a25",
+    "time": "2024-05-03 07:56:24.987",
+    "user_id": null,
+    "user_name": null,
+    "phone_number": null,
+    "email": null,
+    "event_type": "view",
+    "domain_userid": "1cf77f49-fb46-43f0-a2d1-1dbc17a49ac0",
+    "products": {
+        "product_id": "2",
+        "product_name": "T shirt",
+        "price": 111111,
+        "quantity": null,
+        "size": null,
+        "category": "\u00c1o ph\u00f4ng n\u1eef"
+    }
+}---------------
+{
+    "event_id": "2f774ae9-a1b7-44dd-9ca2-b60f8916d234",
+    "time": "2024-05-03 07:56:53.077",
+    "user_id": null,
+    "user_name": null,
+    "phone_number": null,
+    "email": null,
+    "event_type": "add",
+    "domain_userid": "1cf77f49-fb46-43f0-a2d1-1dbc17a49ac0",
+    "products": {
+        "product_id": "2",
+        "product_name": "T shirt",
+        "price": 111111,
+        "quantity": 1,
+        "size": "XXL",
+        "category": "\u00c1o ph\u00f4ng n\u1eef"
+    }
+}---------------
+{
+    "event_id": "a5ec8ad1-e25a-4bf7-bb12-5a4b744753e2",
+    "time": "2024-05-03 07:56:53.077",
+    "user_id": null,
+    "user_name": null,
+    "phone_number": null,
+    "email": null,
+    "event_type": "add",
+    "domain_userid": "1cf77f49-fb46-43f0-a2d1-1dbc17a49ac0",
+    "products": {
+        "product_id": "2",
+        "product_name": "T shirt",
+        "price": 111111,
+        "quantity": 1,
+        "size": "XXL",
+        "category": "\u00c1o ph\u00f4ng n\u1eef"
+    }
+}---------------
+{
+    "event_id": "1eb0baa0-fda6-4fad-891f-dd1002841505",
+    "time": "2024-05-03 09:46:39.089",
+    "user_id": null,
+    "user_name": null,
+    "phone_number": null,
+    "email": null,
+    "event_type": "add",
+    "domain_userid": "1cf77f49-fb46-43f0-a2d1-1dbc17a49ac0",
+    "products": {
+        "product_id": "2",
+        "product_name": "T shirt",
+        "price": 111111,
+        "quantity": 1,
+        "size": "XXL",
+        "category": "\u00c1o ph\u00f4ng n\u1eef"
+    }
+}---------------
+{
+    "event_id": "cdf05ad3-88c9-4934-8a28-78b492d4a856",
+    "time": "2024-05-03 09:47:10.754",
+    "user_id": "2",
+    "user_name": "namvu",
+    "phone_number": "123456789",
+    "email": "nam@gmail.com",
+    "event_type": "view",
+    "domain_userid": "1cf77f49-fb46-43f0-a2d1-1dbc17a49ac0",
+    "products": {
+        "product_id": "1",
+        "product_name": "\u00c1o ph\u00f4ng nam",
+        "price": 123456,
+        "quantity": null,
+        "size": null,
+        "category": "\u00c1o ph\u00f4ng nam"
+    }
+}---------------
+---------------
+---------------
