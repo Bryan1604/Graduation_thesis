@@ -11,3 +11,8 @@ temp/*
 /data
 /snowplow/postgres-data
 /iglu-server-config
+/data_cdp
+.idea
+venv
+logs
+__pycache__
