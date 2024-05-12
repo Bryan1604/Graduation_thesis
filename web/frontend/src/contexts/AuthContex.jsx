@@ -2,7 +2,7 @@ import { createContext, useEffect, useState } from "react";
 import { verifyToken, verifyTokenAdmin } from "../services/auth/verifyToken";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
+import { AddUserContext, RemoveUserContext } from "../Tracker";
 export const AuthContext = createContext({});
 
 export const AuthContextProvider = ({ children }) => {
@@ -21,6 +21,8 @@ export const AuthContextProvider = ({ children }) => {
             localStorage.removeItem("role");
           } else {
             setUser(res.data);
+            console.log(res.data);
+            AddUserContext(res.data.id, res.data.name, res.data.phone, res.data.email)
             setToken(token);
           }
         })
@@ -55,6 +57,16 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   const handleLoggedOut = () => {
+    const token_test = localStorage.getItem("token");
+    verifyToken(token_test)
+      .then((res) => {
+        if (res.errCodeCheckLogin === 1) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("role");
+        } else {
+          RemoveUserContext(res.data.id, res.data.name, res.data.phone, res.data.email)
+        }
+      })
     localStorage.removeItem("token");
     localStorage.removeItem("role");
 

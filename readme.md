@@ -36,4 +36,5 @@ Note :
         - tải lên elasticseacrh
         - cập nhật sở thích dài hạn
         - cập nhật view count
+        - xu ly cac don dat hang -> lay luon trong database cu khi co 1 don duoc dat
         

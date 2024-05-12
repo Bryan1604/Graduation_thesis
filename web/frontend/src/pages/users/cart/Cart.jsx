@@ -16,6 +16,7 @@ const Cart = () => {
   const total = useSelector((state) => state.cartList.count);
   const [showModal, setShowModal] = useState(false);
   let email = "";
+  console.log(listCartItem);
   if (user) {
     email = user.email;
     useEffect(() => {
@@ -61,19 +62,21 @@ const Cart = () => {
               <div key={cartItem.name + cartItem.size} className={cx("product")}>
                 <span onClick={() => handleOnSubmit(email, cartItem.productId, cartItem.size, cartItem.name, cartItem.category, cartItem.price, cartItem.quantity)}>x</span>
                 <img src={cartItem.imageUrl} alt="#" />
-                <p className={cx("description")}>
-                  {cartItem.description} <span>{cartItem.size}</span>
-                </p>
-                <div className={cx("count")}>
-                  <p className={cx("control")} onClick={() => handleDownQuantity(cartItem.quantity, email, cartItem.productId, cartItem.size)}>
-                    -
+                <div className={cx("info")}>
+                  <p className={cx("name")}>
+                    {cartItem.name} <span>{cartItem.size}</span>
                   </p>
-                  <p>{cartItem.quantity}</p>
-                  <p className={cx("control")} onClick={() => handleUpQuantity(cartItem.quantity, email, cartItem.productId, cartItem.size)}>
-                    +
-                  </p>
+                  <p className={cx("price")}>{formatNumber(cartItem.price)} ₫</p>
+                  <div className={cx("count")}>
+                    <p className={cx("control_minus")} onClick={() => handleDownQuantity(cartItem.quantity, email, cartItem.productId, cartItem.size)}>
+                      -
+                    </p>
+                    <p className={cx("count_select")}>{cartItem.quantity}</p>
+                    <p className={cx("control_add")} onClick={() => handleUpQuantity(cartItem.quantity, email, cartItem.productId, cartItem.size)}>
+                      +
+                    </p>
+                    </div>
                 </div>
-                <p className={cx("price")}>{formatNumber(cartItem.price)} đ</p>
               </div>
             ))}
           </div>
@@ -82,6 +85,9 @@ const Cart = () => {
               Tổng cộng <span>{formatNumber(total)} đ</span>
             </p>
             <button onClick={handleShowModal}>Thanh Toán</button>
+            <a href="#" target="_blank" title="Phương thức thanh toán">
+              <img src="https://theme.hstatic.net/1000277297/1001091004/14/footer_trustbadge.png?v=398" alt="#" />
+            </a>
           </div>
         </div>
       ) : (
