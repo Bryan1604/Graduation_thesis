@@ -54,6 +54,7 @@ export const AuthContextProvider = ({ children }) => {
     localStorage.setItem("role", user.role);
     setUser(user);
     setToken(token);
+    // AddUserContext(user.id, user.name, user.phone, user.email)
   };
 
   const handleLoggedOut = () => {
@@ -69,7 +70,6 @@ export const AuthContextProvider = ({ children }) => {
       })
     localStorage.removeItem("token");
     localStorage.removeItem("role");
-
     setToken(null);
     setUser(null);
   };

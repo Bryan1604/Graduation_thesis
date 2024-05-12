@@ -1,7 +1,7 @@
 import { GETLISTITEM, CREATEITEM, DELETEITEM, UPDATEITEM, FETCH_LISTCART_SUCCESS, UPQUANTITY, DOWNQUANTITY, CREATEORDER } from "./type";
 import { getCartItemList, createCartItem, deleteCartItem, updateCartItem } from "../../services/user/cart";
 import { createOrder } from "../../services/order";
-import { RemoveProduct, AddProduct , PurchaseProduct} from "../../Tracker";
+import { RemoveProduct, AddProduct, PurchaseProduct } from "../../Tracker";
 export const getListItem = (email) => {
   return async (dispatch, getState) => {
     try {

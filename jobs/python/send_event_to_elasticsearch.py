@@ -154,14 +154,14 @@ while True:
                         "price" : product_info["price"],
                         "quantity" : product_info.get("quantity") if product_info.get("quantity") is not None else 1 ,
                         # "size" : product_info.get("size"),
-                        "category": product_info["category"],
+                        # "category": product_info["category"],
                     }
                 }
                 
                 # update total of view 
                 if(event_data['event_type'] == "view") :
                     process_product_view(event_data['user_id'], event_data['products']['product_id'])
-                
+
                 print(event_data)
                 try:
                     es.index(index=index_name, body=event_data)

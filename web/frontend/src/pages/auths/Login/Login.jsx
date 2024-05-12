@@ -45,7 +45,6 @@ export default function Login() {
           const user = response.user;
           handleLoggedin(token, user);
           toast.success("Đăng nhập thành công");
-          console.log(user);
           SetEmailUser(user.email);
           AddUserContext(user.id, user.name, user.phone, user.email)
           navigateTo("/");

@@ -55,14 +55,15 @@ const Cart = () => {
   return (
     <div className={cx("cart")}>
       <h1>Giỏ hàng</h1>
+
       {listCartItem.length > 0 && token ? (
-        <div>
+        <div className={cx("cart-body")}>
           <div className={cx("cartItemList")}>
             {listCartItem.map((cartItem, index) => (
               <div key={cartItem.name + cartItem.size} className={cx("product")}>
                 <span onClick={() => handleOnSubmit(email, cartItem.productId, cartItem.size, cartItem.name, cartItem.category, cartItem.price, cartItem.quantity)}>x</span>
                 <img src={cartItem.imageUrl} alt="#" />
-                <div className={cx("info")}>
+                <div className={cx("infor")}>
                   <p className={cx("name")}>
                     {cartItem.name} <span>{cartItem.size}</span>
                   </p>
@@ -75,14 +76,16 @@ const Cart = () => {
                     <p className={cx("control_add")} onClick={() => handleUpQuantity(cartItem.quantity, email, cartItem.productId, cartItem.size)}>
                       +
                     </p>
-                    </div>
+                  </div>
+
                 </div>
+
               </div>
             ))}
           </div>
           <div className={cx("submit")}>
             <p>
-              Tổng cộng <span>{formatNumber(total)} đ</span>
+              TỔNG CỘNG <span>{formatNumber(total)} ₫</span>
             </p>
             <button onClick={handleShowModal}>Thanh Toán</button>
             <a href="#" target="_blank" title="Phương thức thanh toán">
@@ -98,6 +101,7 @@ const Cart = () => {
           <h3>“Hổng” có gì trong giỏ hết</h3>
           <p>Về trang cửa hàng để chọn mua sản phẩm bạn nhé!!</p>
           <button onClick={() => handleOnclickEmpty()}>Quay lại trang chủ</button>
+
         </div>
       )}
 
