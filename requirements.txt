@@ -156,3 +156,8 @@ websocket-client==1.6.4
 Werkzeug==2.2.2
 yfinance==0.2.32
 zope.interface==6.1
+
+confluent_kafka==2.4.0
+py4j==0.10.9.7
+pyspark==3.5.0 
+elasticsearch==8.13.0

@@ -23,3 +23,17 @@ Cac bươc thuc hien hien:
 lý do ko chạy được postgress -> mount sai : ./snowplow/postgres-data:/var/lib/postgresql/data .
  Phải là : ./snowplow/postgres-data:/var/lib/postgresql@14/data
  Do tải xuống là bản postgresql@14 đổi tên từ postgresql :v
+
+- Lệnh chạy trên spark spark: vd
+    docker exec -it spark-master spark-submit \
+    --master spark://spark-master:7077 \
+    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/python/wordcount.py
+
+
+Note :
+    Done:
+        - sao chép db
+        - tải lên elasticseacrh
+        - cập nhật sở thích dài hạn
+        - cập nhật view count
+        

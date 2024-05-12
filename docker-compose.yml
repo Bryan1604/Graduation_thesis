@@ -1,9 +1,13 @@
 version: '3'
 
 x-spark-common: &spark-common
-  image: bitnami/spark:latest
+  # image: bitnami/spark:latest
+  build:
+    context : ./spark
+    dockerfile: Dockerfile
   volumes:
     - ./jobs:/opt/bitnami/spark/jobs
+  command: bash -c "spark-submit"
   networks:
     - confluent
 
@@ -59,6 +63,7 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      # KAFKA_LISTENERS: PLAINTEXT://localhost:29092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     networks:
       - confluent
@@ -208,6 +213,8 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
+    mem_limit: 2g
+    cpus: 2
     environment:
       - cluster.name=streaming_event
       - node.name=elasticsearch   # 1 node trên cluster
@@ -230,18 +237,6 @@ services:
       - "3306:3306"
     volumes:
       - ./data:/var/lib/mysql
-    
-  #db cho dữ liệu sau khi được tính toán 
-  CDP-db:
-    image: mysql
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: 12345678
-      MYSQL_DATABASE: CDP-db
-    ports:
-      - "3307:3307"
-    volumes:
-      - ./data_cdp:/var/lib/mysql
 
 networks:
   confluent:

@@ -1,14 +1,75 @@
+from pyspark import SparkConf
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import from_json, col
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, ArrayType
+from pyspark.streaming import StreamingContext
+import os
 
-spark = SparkSession.builder.appName("PythonWordCount").getOrCreate()
+KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:29092")
+KAFKA_TOPIC_TEST = os.environ.get("KAFKA_TOPIC_TEST", "enriched")
+KAFKA_API_VERSION = os.environ.get("KAFKA_API_VERSION", "7.3.1")
 
-text = "Hello Spark Hello Python Hello Airflow Hello Docker and Hello Yusuf"
+def main():
+    spark = SparkSession.builder.appName("StreamingEvent")\
+        .config("spark.jars.packages", "org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,spark-streaming-kafka-0-10_2.12:3.5.0")\
+        .getOrCreate()
+    
+    spark.sparkContext.setLogLevel('WARN')
+    
+    schema_event = StructType([
+        StructField("event_id", StringType(), True),
+        StructField("time", StringType(), True),
+        StructField("user_id", IntegerType(), True),
+        StructField("user_name", StringType(), True),
+        StructField("phone_number", StringType(), True),
+        StructField("email", StringType(), True), 
+        StructField("domain_userid", StringType(), True),
+        StructField("event_type", StringType(), True),
+        StructField("products", ArrayType(
+            StructType([
+                StructField("product_id", IntegerType(), True),
+                StructField("product_name", StringType(), True),
+                StructField("price", IntegerType(), True),
+                StructField("quantity", IntegerType(), True),
+                StructField("category_id", IntegerType(), True)
+            ])
+        ), True)
+    ])
+    
+    # def read_kafka_topic(topic):
+    #     return (spark.readStream
+    #         .format('kafka')
+    #         .option('kafka.bootstrap.servers', 'localhost:29092')
+    #         .option('subscribe', topic)
+    #         .option('startingOffsets', 'earliest')
+    #         .load()
+    #         .writeStream
+    #         .format('console')
+    #         .option('truncate', False)
+    #         .start()
+    #         )
+        
+    # read_kafka_topic('enriched')
+            
+    # Read data stream from Kafka
+    kafka_df = spark.readStream \
+        .format("kafka") \
+        .option("kafka.bootstrap.servers", ["localhost:29092","localhost:29093" ]) \
+        .option("subscribe", KAFKA_TOPIC_TEST) \
+        .option("startingOffsets", 'earliest') \
+        .load()
 
-words = spark.sparkContext.parallelize(text.split(" "))
+    # Print the data to the console (without schema knowledge)
+    query = kafka_df.writeStream \
+        .format("console") \
+        .option("truncate", False) \
+        .start()
 
-wordCounts = words.map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
+    # Wait for the streaming query to terminate
+    query.awaitTermination()
 
-for wc in wordCounts.collect():
-    print(wc[0], wc[1])
+    # Stop the SparkSession (optional)
+    spark.stop()
 
-spark.stop()
+if __name__ == "__main__":
+    main()
