@@ -5,7 +5,7 @@ const cartController = {
     try {
       const { email } = req.params;
       const [rows, fields] = await connection.promise().query(
-        `SELECT p.name, c.size, c.quantity ,p.description,p.imageUrl,p.price,c.productId
+        `SELECT p.name, c.size, c.quantity ,p.description,p.imageUrl,p.price,c.productId, c.category
         FROM cartItem c 
         INNER JOIN products p ON c.productId = p.productId
         where email = ?`,
@@ -49,7 +49,7 @@ const cartController = {
       } else {
         // Nếu chưa tồn tại thì thêm vào giỏ hàng
         const insertSql = "INSERT INTO cartItem (email, productId, size, quantity, category) VALUES (?, ?, ?, ?, ?)";
-        // const [insertRows, insertFields] = await connection.promise().query(insertSql, [email, productId, size, quantity, category]);
+        const [insertRows, insertFields] = await connection.promise().query(insertSql, [email, productId, size, quantity, category]);
 
         res.json({
           data: { errCode: 0 },
@@ -118,6 +118,7 @@ const cartController = {
 
       // Nếu dữ liệu tồn tại, thực hiện truy vấn xóa
       const [rows, fields] = await connection.promise().query("DELETE FROM cartItem WHERE productId = ? AND size = ? AND email = ? AND category = ?", [productId, size, email, category]);
+
       res.json({
         data: { data: rows, errCode: 0, message: "Delete success!!" },
       });

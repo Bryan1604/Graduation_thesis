@@ -1,4 +1,5 @@
 const connection = require("../database/connectDB");
+const cdp_connection = require("../database/connectDB_CDP");
 
 const orderController = {
   getALL: async (req, res) => {
@@ -61,6 +62,9 @@ const orderController = {
 
         // Commit giao dịch nếu mọi thứ thành công
         await connection.promise().commit();
+
+        //TODO : update vao bang customers cac truong : total_purchase, total_purchase_value, avg_purchase_value, updated_time
+        const insertIntoCustomerSql = "INSERT INTO customers (total_purchase, total_purchase_value, avg_purchase_value,updated_time) VALUES (?, ?, ?,?, ?)"
 
         res.json({
           data: {
