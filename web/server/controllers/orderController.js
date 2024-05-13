@@ -63,9 +63,25 @@ const orderController = {
         // Commit giao dịch nếu mọi thứ thành công
         await connection.promise().commit();
 
+        // ---------
         //TODO : update vao bang customers cac truong : total_purchase, total_purchase_value, avg_purchase_value, updated_time
-        const insertIntoCustomerSql = "INSERT INTO customers (total_purchase, total_purchase_value, avg_purchase_value,updated_time) VALUES (?, ?, ?,?, ?)"
+        const insertIntoCustomerSql = "UPDATE customers SET total_purchase = ?, total_purchase_value = ?, avg_purchase_value = ?,min_purchase_value = ? ,updated_time = ? WHERE email = ?"
+        const [total_purchase_rows] = await connection.promise().query("SELECT COUNT(email) AS total_purchase FROM `order` WHERE email = ?", [email]);
+        const total_purchase = total_purchase_rows[0].total_purchase
 
+        const [total_purchase_value_rows] = await connection.promise().query("SELECT SUM(total) AS total_purchase_value FROM `order` WHERE email = ?", [email]);
+        const total_purchase_value = total_purchase_value_rows[0].total_purchase_value
+
+        const avg_purchase_value = total_purchase_value / total_purchase;
+        const [min_purchase_value_rows] = await connection.promise().query("SELECT MIN(total) AS min_purchase_value FROM `order` WHERE email = ?", [email]);
+        const min_purchase_value = min_purchase_value_rows[0].min_purchase_value
+
+        const [updated_time_rows] = await connection.promise().query("SELECT orderDate AS update_time FROM `order` WHERE email = ? ORDER BY `orderDate` DESC LIMIT 1", [email]);
+        const update_time = updated_time_rows[0].update_time
+
+        await cdp_connection.promise().query(insertIntoCustomerSql, [total_purchase, total_purchase_value , avg_purchase_value, min_purchase_value, update_time, email]);
+        await cdp_connection.promise().commit();
+        console.log("total_purchase", total_purchase);
         res.json({
           data: {
             orderId: orderId,

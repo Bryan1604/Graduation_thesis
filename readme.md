@@ -36,5 +36,6 @@ Note :
         - tải lên elasticseacrh
         - cập nhật sở thích dài hạn
         - cập nhật view count
-        - xu ly cac don dat hang -> lay luon trong database cu khi co 1 don duoc dat
+        - xu ly cac don dat hang -> lay luon trong database cu khi co 1 don duoc dat của người dùng : total_purchase, total_purchase_value, avg_purchase_value, min_purchase_value
+
         

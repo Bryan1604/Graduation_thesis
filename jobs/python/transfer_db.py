@@ -24,6 +24,13 @@ try:
                 print("Inserted data for customer ID:", row[0])
         cdp_db.commit()
         
+         #transfer category data 
+        server_cursor.execute("SELECT * FROM categories ")
+        rows = server_cursor.fetchall()
+        for row in rows :
+            cdp_cursor.execute("INSERT INTO categories (category_id, category_name, imagecategoryUrl) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE category_name = VALUES(category_name), imagecategoryUrl = VALUES(imagecategoryUrl)", (row[0], row[1], row[2]))
+        cdp_db.commit()
+        
         #transfer products data
         server_cursor.execute("SELECT * FROM products ")
         rows = server_cursor.fetchall()
@@ -37,6 +44,8 @@ try:
                 cdp_cursor.execute("INSERT INTO products (product_id, product_name, description , price, category_id, image_url) VALUES (%s, %s, %s, %s, %s, %s)", (row[0],row[1], row[2], row[3], row[4], row[5]))
                 print("Inserted data for product ID:", row[0])
         cdp_db.commit()
+        
+       
         
 except mysql.connector.Error as err:
     print(f"Error: {err}")
