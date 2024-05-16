@@ -27,7 +27,8 @@ function Sidebar({ setToggleButton }) {
     listProduct: true,
     listCustommer: false,
     listCategory: false,
-    shop: false
+    shop: false,
+    segment: false,
   });
   const [toggle, setToggle] = useState({
     action: false,
@@ -49,6 +50,7 @@ function Sidebar({ setToggleButton }) {
       listCustommer: false,
       listCategory: false,
       shop: false,
+      segment: false,
       [detailName]: true,
     }));
   };
@@ -169,6 +171,21 @@ function Sidebar({ setToggleButton }) {
                   </div>
                 </Link>
 
+              </div>
+
+              {/* Phân khúc */}
+              <div className={cx("homeMenuItem", "itemNav", {
+                active: active.segment
+              })}>
+                  <div className={cx("wrapIconItem")}>
+                  <HomeIcon />
+                </div>
+
+                <Link to="/admin/segments" className={cx("menuItemTitle")} onClick={() => handleActive("segment")}>
+                  <div className={cx("menuItemTitle")}>
+                    <span style={{color:'white'}}>Phân khúc</span>
+                  </div>
+                </Link>
               </div>
 
               <hr className={cx("menuDivider")}></hr>

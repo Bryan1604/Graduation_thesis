@@ -24,6 +24,8 @@ const routes = {
   storeAddAdmin: "/admin/stores/add",
   orderListAdmin: "/admin/orders",
   customerListAdmin: "/admin/customers",
+  segmentAdmin: "/admin/segments",
+  segmentAddAdmin: "/admin/segments/add",
   notfound404admin: "/admin/*",
 };
 

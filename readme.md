@@ -54,6 +54,8 @@ Note :
 
         - connect airflow voi spark
 
+        - có thể phải lọc khách hàng theo nhiều điều kiện trong 1 phân khúc
+
     Can lam luon :
         - Code UI va Api tao cac segment
         - Khi co segment duoc tao moi hoac xoa -> goi toi airlow de chay code tao moi 1 segment

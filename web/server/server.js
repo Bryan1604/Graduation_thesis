@@ -31,6 +31,7 @@ const sizeRouter = require("./routers/sizeRouter");
 const cartRouter = require("./routers/cartRouter");
 const orderRouter = require("./routers/orderRouter");
 const codeProvinceRouter = require("./routers/codeProvinceRouter");
+const segmentRouter = require("./routers/segmentRouter");
 
 //API
 app.use("/customer", customerRouter);
@@ -42,5 +43,6 @@ app.use("/category", categoryRouter);
 app.use("/cart", cartRouter);
 app.use("/order", orderRouter);
 app.use("/codeProvince", codeProvinceRouter);
+app.use("/segment", segmentRouter);
 
 app.listen(3000);
