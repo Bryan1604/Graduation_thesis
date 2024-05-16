@@ -106,7 +106,6 @@ def connect_elasticsearch():
         except Exception as e:
             print(f"Failed to create index {index_name}: {e}")
 
-
 # def update_total_view(user_id, product_id):
 #     if cdp_db.is_connected():
 #         try:

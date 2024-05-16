@@ -38,4 +38,30 @@ Note :
         - cập nhật view count
         - xu ly cac don dat hang -> lay luon trong database cu khi co 1 don duoc dat của người dùng : total_purchase, total_purchase_value, avg_purchase_value, min_purchase_value
 
-        
+    inprogress : 
+        - api segment
+
+
+    todo :
+        - them 1 truong update_time vao bang customer_product -> cap nhat thoi gian xem san pham cua nguoi dung ( chưa biết có cần thiết không)
+        - cap nhap the loai ma nguoi dung quan tam nhieu nhat
+        - tạo segment theo thói quen mua sắm
+        - tao segment theo  các sản phẩm quan tâm
+        - segment theo tinhf trạng khách hàng
+        - segment dựa theo tương tác của khách hàng 
+        - segment dựa theo hành vi của khách hàng
+        link : https://blog.hub-js.com/segment-linh-hoat-tren-extech/
+
+        - connect airflow voi spark
+
+    Can lam luon :
+        - Code UI va Api tao cac segment
+        - Khi co segment duoc tao moi hoac xoa -> goi toi airlow de chay code tao moi 1 segment
+
+    Điều kiện phân khúc được lưu dưới dạng json ??
+     {
+        field: "", : lưu thông tin về tên điều kiện 
+        operator: "", lưu thông tin về kiểu giá trị 
+        type: "", lưu thông tin về toán tử
+        value: "", lưu thông tin về giá trị
+     }

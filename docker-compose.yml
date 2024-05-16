@@ -7,16 +7,17 @@ x-spark-common: &spark-common
     dockerfile: Dockerfile
   volumes:
     - ./jobs:/opt/bitnami/spark/jobs
+    - /Users/nghiann/Library/Python/3.11/lib/python/site-packages:/usr/local/lib/python3.11/site-packages
   command: bash -c "spark-submit"
   networks:
     - confluent
 
 x-airflow-common: &airflow-common
   build:
-    context: .
+    context: ./airflow
     dockerfile: Dockerfile
   env_file:
-    - airflow.env
+    - ./airflow/airflow.env
   volumes:
     - ./jobs:/opt/airflow/jobs
     - ./dags:/opt/airflow/dags
@@ -151,19 +152,6 @@ services:
     command: "--config /iglu/config.hocon"
     networks:
       - confluent
-
-  #khoi tao database cho customer data -> co thể khoong cần -> su dụng luôn mysql
-  # postgres:
-  #   image: postgres:latest
-  #   restart: always
-  #   environment:
-  #     POSTGRES_USER: admin
-  #     POSTGRES_PASSWORD: admin
-  #     POSTGRES_DB: cdp
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - ./pgdata:/var/lib/postgresql/data
   
   spark-master:
     <<: *spark-common
@@ -172,6 +160,7 @@ services:
     ports:
       - "9090:8080"
       - "7077:7077"
+      - "22:22"
 
   spark-worker:
     <<: *spark-common
@@ -197,6 +186,7 @@ services:
 
   webserver:
     <<: *airflow-common
+    container_name: airflow-webserver
     command: webserver
     ports:
       - "8082:8080"
@@ -205,11 +195,13 @@ services:
 
   scheduler:
     <<: *airflow-common
+    container_name: airflow-scheduler
     command: bash -c "airflow db migrate && airflow users create --username admin --firstname luong --lastname vu --role Admin --email luongvuhs@gmail.com --password admin && airflow scheduler"
 
   #elastic search 
   elasticsearch:
     image: elasticsearch:8.13.0
+    container_name: elasticsearch
     ports:
       - 9200:9200
       - 9300:9300
@@ -227,6 +219,7 @@ services:
 
   db:
     image: mysql
+    container_name: database
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 12345678

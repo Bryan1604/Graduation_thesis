@@ -54,19 +54,18 @@ def main():
     # Read data stream from Kafka
     kafka_df = spark.readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", ["localhost:29092","localhost:29093" ]) \
+        .option("kafka.bootstrap.servers", "kafka1:29092") \
         .option("subscribe", KAFKA_TOPIC_TEST) \
         .option("startingOffsets", 'earliest') \
         .load()
 
     # Print the data to the console (without schema knowledge)
-    query = kafka_df.writeStream \
+    kafka_df.selectExpr("CAST(key AS STRING)", "CAST(value AS STRING)") \
+        .writeStream \
         .format("console") \
-        .option("truncate", False) \
-        .start()
+        .start() \
+        .awaitTermination()
 
-    # Wait for the streaming query to terminate
-    query.awaitTermination()
 
     # Stop the SparkSession (optional)
     spark.stop()

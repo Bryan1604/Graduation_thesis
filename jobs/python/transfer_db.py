@@ -18,9 +18,9 @@ try:
             cdp_cursor.execute("SELECT * FROM customers WHERE customer_id = %s", (row[0],))
             record = cdp_cursor.fetchone()
             if record:
-                cdp_cursor.execute("UPDATE customers SET fullname = %s, email = %s, phone_number = %s WHERE customer_id = %s", (row[1], row[2], row[3], row[0]))
+                cdp_cursor.execute("UPDATE customers SET fullname = %s, email = %s, phone_number = %s , gender = %s, birthday = %s  WHERE customer_id = %s", (row[1], row[2], row[3], row[6], row[7], row[0]))
             else :
-                cdp_cursor.execute("INSERT INTO customers (customer_id, fullname, email, phone_number) VALUES (%s, %s, %s, %s)", (row[0],row[1], row[2], row[3]))
+                cdp_cursor.execute("INSERT INTO customers (customer_id, fullname, email, phone_number, gender, birthday) VALUES (%s, %s, %s, %s, %s, %s)", (row[0],row[1], row[2], row[3], row[6], row[7]))
                 print("Inserted data for customer ID:", row[0])
         cdp_db.commit()
         
