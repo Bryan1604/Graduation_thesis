@@ -30,6 +30,18 @@ export const createSegment = async (segment_name, rule) => {
     console.log(res.data);
     return res.data;
   } catch (error) {
-    console.log("getCategory " + error);
+    console.log("getSegment " + error);
+  }
+};
+
+export const getOneSegment = async (id) => {
+  try {
+    const res = await request.get(`/segment/${id}`, {
+      params: {},
+    });
+    return res.data;
+  }
+  catch (error) {
+    console.log("getOneSegment " + error);
   }
 };

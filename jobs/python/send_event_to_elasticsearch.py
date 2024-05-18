@@ -92,7 +92,7 @@ def connect_elasticsearch():
                             "product_id": {"type": "keyword"},
                             "product_name": {"type": "keyword"},
                             "price": {"type": "keyword"},
-                            "quantity": {"type": "keyword", "ignore_malformed": True},
+                            "quantity": {"type": "keyword"},
                             # "size": {"type": "keyword", "ignore_malformed": True},
                             "category": {"type": "keyword"},
                         }

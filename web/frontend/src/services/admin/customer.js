@@ -21,3 +21,15 @@ export const deleteCustomer = async (id) => {
     console.log("customer " + error);
   }
 };
+
+export const getOneCustomer = async (id) => {
+  try {
+    const res = await request.get(`/customer/${id}`, {
+      params: {},
+    });
+    console.log(res.data.data);
+    return res.data.data;
+  } catch (error) {
+    console.log("customer " + error);
+  }
+};

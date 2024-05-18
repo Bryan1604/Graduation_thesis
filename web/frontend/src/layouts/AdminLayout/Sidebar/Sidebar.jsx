@@ -178,7 +178,7 @@ function Sidebar({ setToggleButton }) {
                 active: active.segment
               })}>
                   <div className={cx("wrapIconItem")}>
-                  <HomeIcon />
+                  <WarehouseIcon />
                 </div>
 
                 <Link to="/admin/segments" className={cx("menuItemTitle")} onClick={() => handleActive("segment")}>

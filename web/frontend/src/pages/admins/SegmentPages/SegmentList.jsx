@@ -6,12 +6,14 @@ import { Link } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { Modal, Button } from "react-bootstrap";
 import { getSegment, deleteSegment, createSegment } from "../../../services/admin/segment";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { format, parseISO } from 'date-fns';
 
 const cx = classNames.bind(styles);
-import originalStoreData from "../../users/StoreLocations/storeData";
-import { toast } from "react-toastify";
 
 const SegmentList = () => {
+  const navigateTo = useNavigate();
   const columns = [
     {
       name: "STT",
@@ -26,13 +28,13 @@ const SegmentList = () => {
     },
     {
       name: "Thời gian tạo",
-      selector: (row) => row.create_time,
+      selector: (row) => formatDateTime(row.create_time),
       width: "20%",
       wrap: true,
     },
     {
       name: "Thời gian cập nhật",
-      selector: (row) => row.update_time,
+      selector: (row) => formatDateTime(row.update_time),
       width: "20%",
     },
     {
@@ -69,18 +71,6 @@ const SegmentList = () => {
     const segmentIdsToDelete = selectedRows.map((row) => row.segment_id);
 
     try {
-      /* Gọi API để xóa các danh mục
-            //const response = await fetch('URL_API_DELETE_CATEGORIES', {
-            //    method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ categoryIds: categoryIdsToDelete }),
-            });
-    
-            if (!response.ok) {
-                throw new Error(`HTTP error! Status: ${response.status}`);
-            }*/
       await Promise.all(segmentIdsToDelete.map((id) => deleteSegment(id)));
       // Nếu xóa thành công, cập nhật state với danh sách mới(loại bỏ các danh mục đã chọn)
       const updatedSegments = segments.filter((c) => !segmentIdsToDelete.includes(c.segment_id));
@@ -89,13 +79,27 @@ const SegmentList = () => {
       // Đặt lại danh sách được chọn
       setClearSelect(!clearSelect);
       setSelectedRows([]);
-      toast.success("Đã xóa địa chỉ cửa hàng!!");
+      toast.success("Đã xóa phân khúc khách hàng!!");
     } catch (error) {
-      console.error("Lỗi khi xóa cua hang:", error.message);
-      toast.error("Lỗi khi xóa địa chỉ cửa hàng!!");
+      console.error("Lỗi khi xóa phân khúc khách hang:", error.message);
+      toast.error("Lỗi khi xóa phân khúc khách hàng!!");
     }
     setShowDeleteModal(false);
   };
+
+  const handleRowClicked = (row) => {
+    navigateTo(`/admin/segments/${row.segment_id}`);
+  }
+
+  const formatDateTime = (dateTimeString) => {
+        try {
+            const parsedDate = parseISO(dateTimeString);
+            return format(parsedDate, 'yyyy-MM-dd HH:mm:ss');
+        } catch (error) {
+            console.error("Invalid date time value:", dateTimeString);
+            return dateTimeString; // hoặc trả về giá trị gốc nếu không thể phân tích cú pháp
+        }
+    };
 
   return (
     <div className={cx("wrap")}>
@@ -122,6 +126,7 @@ const SegmentList = () => {
           setSelectedRows(selectedRows);
           console.log(selectedRows);
         }}
+        onRowClicked={handleRowClicked}  
         customStyles={customStyles}
         clearSelectedRows={clearSelect}
       ></DataTable>
@@ -129,7 +134,7 @@ const SegmentList = () => {
         <Modal.Header closeButton>
           <Modal.Title>Xác nhận hủy</Modal.Title>
         </Modal.Header>
-        <Modal.Body>Bạn chắc chắn muốn xóa cửa hàng?</Modal.Body>
+        <Modal.Body>Bạn chắc chắn muốn xóa phân khúc khách hàng?</Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" className={cx("btn-close-modal")} style={{ backgroundColor: "#36a2eb" }} onClick={handleCloseDeleteModal}>
             Hủy

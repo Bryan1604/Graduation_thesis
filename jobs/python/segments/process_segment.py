@@ -1,9 +1,12 @@
-import sys
-import os
-from pyspark.sql import SparkSession
+from pyspark.sql import SparkSession, DataFrame
 from segment_type import SegmentField, Operator, DataType
 from datetime import datetime
+from pyspark.sql.functions import reduce, col, expr
+import sys
+import os
 import mysql.connector
+import json
+from segment_type import combile_operator
 
 spark = SparkSession.builder.appName('ProcessSegment')\
     .config('spark.jars.packages', 'com.mysql:mysql-connector-j:8.4.0') \
@@ -13,7 +16,7 @@ sqlContext = SparkSession(spark)
 spark.sparkContext.setLogLevel("ERROR")
 
 # Database connection properties
-db_url = 'jdbc:mysql://192.168.12.104:3306/CDP_DB'
+db_url = 'jdbc:mysql://192.168.10.128:3306/CDP_DB'
 db_properties = {
     'driver': 'com.mysql.cj.jdbc.Driver',
     'user': 'root',
@@ -22,12 +25,11 @@ db_properties = {
 
 # Thiết lập thông tin kết nối toi cdp database
 config_cdp_db = {
-    'host': '192.168.12.104',           
+    'host': '192.168.10.128',           
     'user': 'root',                
     'password': '12345678',   
     'database': 'CDP_DB',    
 }
-
 
 # Load DataFrames from MySQL
 def load_df(table_name):
@@ -51,18 +53,24 @@ def updateSegmentCustomer(customers, segmentId) :
 def filterCustomer(customerdf, segmentdf) :
     #xu ly
     for segment in segmentdf.collect():
-        condition = segment['rule']
+        conditions_json = segment['rule']
+        conditions = json.loads(conditions_json)
         # customers = customerdf.filter((customerdf[condition['field']] > condition['value']))
-        customers = customerdf.filter((customerdf['total_purchase'] < 8))
-        customers.show()
-        segmentId = segment['segment_id']
         
-        #update vao database bang customer_segment
-        updateSegmentCustomer(customers, segmentId)
+        filter_expresstion = "AND".join([combile_operator(cond['condition'], cond['operator'], cond['value']) for cond in conditions])
+        customers = customerdf.filter(expr(filter_expresstion))
+        customers.show()
+        updateSegmentCustomer(customers, segment['segment_id'])
+        
     
 # xoa du lieu cu khi duoc cap nhat
 def deleteSegmentCustomer():
     return
+
+# def combile_condition(df: DataFrame, conditions: list) :
+#     return df.filter(reduce(lambda x, y : x & y, [col(cond.split()[0]).cast(cond.split()[1]) for cond in conditions] ))
+
+
 
 if __name__ == "__main__":
     #vi du ve 1 dieu kien cua segment

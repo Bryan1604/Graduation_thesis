@@ -18,9 +18,12 @@ const segmentController = {
   getById: async (req, res) => {
     try {
       const { id } = req.params;
-      const [rows, fields] = await connection.promise().query("select * from segments where segment_id = ?", [id]);
+      const [segmentDetail, fields] = await connection.promise().query("select * from segments where segment_id = ?", [id]);
+      const [customers, field1] = await connection.promise().query(
+        "select * from customers join customer_segment on customers.customer_id = customer_segment.customer_id where customer_segment.segment_id = ? ", [id]); 
       res.json({
-        data: rows,
+        segmentDetail: segmentDetail,
+        customers: customers
       });
     } catch (error) {
       console.log(error);

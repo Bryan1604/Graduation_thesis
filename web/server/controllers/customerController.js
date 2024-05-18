@@ -1,4 +1,5 @@
 const connection = require("../database/connectDB");
+const connection_cdp = require("../database/connectDB_CDP");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt")
 
@@ -21,9 +22,12 @@ const customerController = {
   getById: async (req, res) => {
     try {
       const { id } = req.params;
-      const [rows, fields] = await connection.promise().query("select * from customers where customerId = ?", [id]);
+      const [rows, fields] = await connection_cdp.promise().query(
+        "select customers.*, (select count(product_id) from customer_product where customer_id = ?) as product_count,(select sum(view_count) from customer_product where customer_id = ?) as total_view_count from customers where customers.customer_id = ?", 
+        [id, id, id]
+      );
       res.json({
-        data: rows,
+        data: rows[0],
       });
     } catch (error) {
       console.log(error);

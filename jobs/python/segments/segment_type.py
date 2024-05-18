@@ -44,7 +44,17 @@ class Operator(Enum):
     def __str__(self):
         return f"{self.name}({self.value}, {self.description})"
 
-    
-    
+def combile_operator( segmentField, operator, value):
+    if operator == 'EQUAL':
+        return f'{segmentField} == {value}'
+    elif operator == 'GREATER_THAN':
+        return f'{segmentField} > {value}'
+    elif operator == 'LESS_THAN':
+        return f'{segmentField} <{value}'
+    elif operator == 'GREATER_OR_EQUAL':
+        return f'{segmentField} > {value} AND {segmentField} == {value}'
+    elif operator == 'LESS_OR_EQUAL':
+        return f'{segmentField} < {value} AND {segmentField} == {value}'
+
     
 

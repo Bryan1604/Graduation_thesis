@@ -24,6 +24,8 @@ import StoreLocation from "../pages/users/StoreLocations/StoreLocation";
 import Cart from "../pages/users/cart/Cart";
 import SegmentList from "../pages/admins/SegmentPages/SegmentList";
 import { AddSegmentForm } from "../pages/admins/SegmentPages/AddSegmentForm";
+import SegmentDetail from "../pages/admins/SegmentPages/SegmentDetail";
+import CustomerDetail from "../pages/admins/CustomerPages/CustomerDetail";
 //import layout
 
 //public route
@@ -54,8 +56,10 @@ const adminRoutes = [
   { path: routesConfig.storeAddAdmin, component: AddStoreForm, title: "Thêm cửa hàng" },
   { path: routesConfig.orderListAdmin, component: OrderList, title: "Quản lý danh sách đơn hàng" },
   { path: routesConfig.customerListAdmin, component: CustomerList, title: "Quản lý danh sách khách hàng" },
+  { path: routesConfig.customerDetailAdmin, component: CustomerDetail, title: "Quản lý thông tin khách hàng" },
   { path: routesConfig.segmentAdmin, component: SegmentList, title: "Danh sách các phân khúc" },
   { path: routesConfig.segmentAddAdmin, component: AddSegmentForm, title: "Thêm phân khúc" },
+  { path: routesConfig.segmentDetailAdmin, component: SegmentDetail, title : "Chi tiết phân khúc khách hàng"},
   { path: routesConfig.notfound404admin, component: NotFound404, layout: DefaultLayout, title: "" },
 ];
 
