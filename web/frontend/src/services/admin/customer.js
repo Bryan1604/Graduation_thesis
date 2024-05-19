@@ -27,8 +27,8 @@ export const getOneCustomer = async (id) => {
     const res = await request.get(`/customer/${id}`, {
       params: {},
     });
-    console.log(res.data.data);
-    return res.data.data;
+    console.log(res.data);
+    return res.data;
   } catch (error) {
     console.log("customer " + error);
   }

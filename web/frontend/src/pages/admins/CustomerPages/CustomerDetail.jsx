@@ -13,6 +13,7 @@ const CustomerDetail = () => {
     const navigate = useNavigate();
     const { id } = useParams();
     const [customer, setCustomer] = useState({});
+    const [favoriteProducts, setFavoriteProducts] = useState([]);
 
     const goBack = () => {
         navigate(-1);
@@ -32,13 +33,16 @@ const CustomerDetail = () => {
         async function getCustomer() {
             try {
                 const data = await getOneCustomer(id);
-                setCustomer(data);
+                setCustomer(data.data);
+                setFavoriteProducts(data.favoriteProducts);
             } catch (error) {
                 console.error("Error fetching customer list:", error);
             }
         }
         getCustomer();
-    },[]);
+    }, []);
+    
+    const favoriteProductsString = favoriteProducts.join(', ');
 
     return (
         <div>
@@ -52,7 +56,7 @@ const CustomerDetail = () => {
                 <div className="left-pane">
                     <h3>Thông tin cơ bản của khách hàng có id : {id}</h3>
                     <h4>Tên : {customer.fullname} </h4>
-                    <h4>Giới tính: {customer.gender == 0 ? 'Male' : 'Female'} </h4>
+                    <h4>Giới tính: {customer.gender == 0 ? 'Nam' : 'Nữ'} </h4>
                     <h4>Ngày sinh : {customer.birthday ? formatDateTime(customer.birthday) : ""}</h4>
                     <h4>Email : {customer.email}</h4>
                     <h4>Số điện thoại : {customer.phone_number}</h4>
@@ -60,7 +64,16 @@ const CustomerDetail = () => {
                 </div>
                 <div className="right-pane">
                     <h3>Thông tin bổ sung :</h3>
-                    <h4>Các sản phẩm yêu thích : {customer.favorite_products} </h4>
+                    <h4>Các sản phẩm yêu thích : </h4>
+                    <div>
+                        {favoriteProducts.map((product, index) => (
+                            <div key={index}>
+                                <a href={`/product/${product}`} target="_blank" rel="noopener noreferrer">
+                                    - {product}
+                                </a>
+                            </div>
+                        ))}
+                    </div>
                     <h4>Thể loại yêu thích : </h4>
                     <h4>Số sản phẩm đã từng xem : {customer.product_count}</h4>
                     <h4>Tổng lượt xem các sản phẩm: {customer.total_view_count}</h4>

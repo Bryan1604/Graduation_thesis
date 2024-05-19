@@ -22,13 +22,32 @@ const customerController = {
   getById: async (req, res) => {
     try {
       const { id } = req.params;
-      const [rows, fields] = await connection_cdp.promise().query(
+      const [customerRows, fields] = await connection_cdp.promise().query(
         "select customers.*, (select count(product_id) from customer_product where customer_id = ?) as product_count,(select sum(view_count) from customer_product where customer_id = ?) as total_view_count from customers where customers.customer_id = ?", 
         [id, id, id]
       );
-      res.json({
-        data: rows[0],
-      });
+      if (customerRows.length === 0) {
+      return res.status(404).json({ state: "error", message: "Customer not found" });
+    }
+
+    const customer = customerRows[0];
+
+    // Lấy danh sách sản phẩm yêu thích
+    const favoriteProductIds = customer.favorite_products ? customer.favorite_products.split(',') : [];
+
+    let favoriteProducts = [];
+    if (favoriteProductIds.length > 0) {
+      const [productRows] = await connection_cdp.promise().query(
+        "SELECT product_name FROM products WHERE product_id IN (?)",
+        [favoriteProductIds]
+      );
+      favoriteProducts = productRows.map(row => row.product_name);
+    }
+
+    res.json({
+      data: customer,
+      favoriteProducts: favoriteProducts
+    });
     } catch (error) {
       console.log(error);
       res.json({

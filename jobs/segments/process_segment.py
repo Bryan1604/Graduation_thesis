@@ -16,7 +16,7 @@ sqlContext = SparkSession(spark)
 spark.sparkContext.setLogLevel("ERROR")
 
 # Database connection properties
-db_url = 'jdbc:mysql://192.168.10.128:3306/CDP_DB'
+db_url = 'jdbc:mysql://192.168.12.104:3306/CDP_DB'
 db_properties = {
     'driver': 'com.mysql.cj.jdbc.Driver',
     'user': 'root',
@@ -25,7 +25,7 @@ db_properties = {
 
 # Thiết lập thông tin kết nối toi cdp database
 config_cdp_db = {
-    'host': '192.168.10.128',           
+    'host': '192.168.12.104',           
     'user': 'root',                
     'password': '12345678',   
     'database': 'CDP_DB',    

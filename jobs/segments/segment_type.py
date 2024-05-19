@@ -55,6 +55,14 @@ def combile_operator( segmentField, operator, value):
         return f'{segmentField} > {value} AND {segmentField} == {value}'
     elif operator == 'LESS_OR_EQUAL':
         return f'{segmentField} < {value} AND {segmentField} == {value}'
+    elif operator == 'INCLUDES' :
+        # return f'{segmentField} < {value} AND {segmentField} == {value}'
+        return
+    elif operator == 'NOT_EQUAL':
+        return f'{segmentField} != {value}'
+    elif operator == 'NOT_INCLUDES' :
+        # return f'{segmentField} < {value} AND {segmentField} == {value}'
+        return
 
     
 

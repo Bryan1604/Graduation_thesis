@@ -18,7 +18,6 @@ cdp_cursor = cdp_db.cursor()
 # elastic search config
 es = Elasticsearch(["http://localhost:9200"])
 index_name = "streaming_event"
-file_path = 'data.txt'
 
 #Load last commited offset from a file
 def load_offset():
@@ -68,6 +67,7 @@ def find_json_strings(data):
     return json_strings
 
 def connect_elasticsearch():
+    print('------')
     if not es.indices.exists(index=index_name):
         index_setting = {
             "settings": {

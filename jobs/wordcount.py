@@ -5,7 +5,7 @@ from pyspark.sql.types import StructType, StructField, StringType, IntegerType, 
 from pyspark.streaming import StreamingContext
 import os
 
-KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "localhost:29092")
+KAFKA_BOOTSTRAP_SERVERS = os.environ.get("KAFKA_BOOTSTRAP_SERVERS", "192.168.12.104:29092")
 KAFKA_TOPIC_TEST = os.environ.get("KAFKA_TOPIC_TEST", "enriched")
 KAFKA_API_VERSION = os.environ.get("KAFKA_API_VERSION", "7.3.1")
 
@@ -54,7 +54,7 @@ def main():
     # Read data stream from Kafka
     kafka_df = spark.readStream \
         .format("kafka") \
-        .option("kafka.bootstrap.servers", "kafka1:29092") \
+        .option("kafka.bootstrap.servers", "192.168.12.104:29092") \
         .option("subscribe", KAFKA_TOPIC_TEST) \
         .option("startingOffsets", 'earliest') \
         .load()

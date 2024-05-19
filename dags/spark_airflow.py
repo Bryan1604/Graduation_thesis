@@ -21,7 +21,14 @@ start = PythonOperator(
 segment_job = SparkSubmitOperator(
     task_id = "segment_job",
     conn_id = "spark-conn",
-    application = "jobs/python/segments/process_segment.py",
+    application = "jobs/segments/process_segment.py",
+    dag = dag
+)
+
+process_long_hobbies = SparkSubmitOperator(
+    task_id = "process_long_hobbies",
+    conn_id = "spark-conn",
+    application = "jobs/process_long_hobbies.py",
     dag = dag
 )
 
@@ -30,5 +37,4 @@ end = PythonOperator(
     python_callable = lambda: print("Jobs completed successfully"),
     dag=dag
 )
-
 start >> segment_job >> end

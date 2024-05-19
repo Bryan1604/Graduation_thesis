@@ -37,10 +37,15 @@ Note :
         - cập nhật sở thích dài hạn
         - cập nhật view count
         - xu ly cac don dat hang -> lay luon trong database cu khi co 1 don duoc dat của người dùng : total_purchase, total_purchase_value, avg_purchase_value, min_purchase_value
+        - api segment, UI segment
 
-    inprogress : 
-        - api segment
+    inprogress :     
+        - sua lai API lay thong tin khach hang ( thong tin cac san pham yeu thich, the loai yeu thich)
+        - có thể phải lọc khách hàng theo nhiều điều kiện trong 1 phân khúc (nhung voi 1 so dieu kien chua xet het)
+        - can chuong trinh theo doi hoat dong chay lien tuc  => khi khoi chay may chu spark -> cho chay luon ??
 
+    Can lam luon :
+        - Khi co segment duoc tao moi hoac xoa -> goi toi airlow de chay code tao moi 1 segment
 
     todo :
         - them 1 truong update_time vao bang customer_product -> cap nhat thoi gian xem san pham cua nguoi dung ( chưa biết có cần thiết không)
@@ -54,11 +59,9 @@ Note :
 
         - connect airflow voi spark
 
-        - có thể phải lọc khách hàng theo nhiều điều kiện trong 1 phân khúc
+       
 
-    Can lam luon :
-        - Code UI va Api tao cac segment
-        - Khi co segment duoc tao moi hoac xoa -> goi toi airlow de chay code tao moi 1 segment
+  
 
     Điều kiện phân khúc được lưu dưới dạng json ??
      {
