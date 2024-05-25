@@ -8,12 +8,13 @@
 temp/*
 !temp/important.log
 
-/data
+data/
+esnode/
 /snowplow/postgres-data
 /iglu-server-config
 /data_cdp
 .idea
 venv
-logs
+logs/
 __pycache__
 node_modules
