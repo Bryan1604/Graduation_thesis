@@ -1,4 +1,4 @@
-version: '3'
+version: '3.8'
 
 x-spark-common: &spark-common
   # image: bitnami/spark:latest
@@ -7,7 +7,7 @@ x-spark-common: &spark-common
     dockerfile: Dockerfile
   volumes:
     - ./jobs:/opt/bitnami/spark/jobs
-    - /Users/nghiann/Library/Python/3.11/lib/python/site-packages:/usr/local/lib/python3.11/site-packages
+    # - /Users/nghiann/Library/Python/3.11/lib/python/site-packages:/usr/local/lib/python3.11/site-packages
   command: bash -c "spark-submit"
   networks:
     - confluent
@@ -26,6 +26,7 @@ x-airflow-common: &airflow-common
     - postgres
   networks:
     - confluent
+  platform: linux/amd64
 
 services:
   zookeeper:
@@ -48,8 +49,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    mem_limit: 2g
+    cpus: 2
     networks:
       - confluent
+    platform: linux/amd64
 
   kafka1:
     container_name: kafka1
@@ -73,6 +77,9 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    volumes:
+      - ./kafka/server.properties:/etc/kafka/server.properties
+    platform: linux/amd64
 
   kafka2:
     container_name: kafka2
@@ -90,80 +97,9 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
     networks:
       - confluent
-
-  # zookeeper:
-  #   image: confluentinc/cp-zookeeper:latest
-  #   hostname: zookeeper
-  #   container_name: zookeeper
-  #   ports:
-  #     - "2181:2181"
-  #   environment:
-  #     ZOOKEEPER_CLIENT_PORT: 2181
-  #     ZOOKEEPER_TICK_TIME: 2000
-  #   healthcheck:
-  #     test:
-  #       [
-  #         'CMD',
-  #         'bash',
-  #         '-c',
-  #         "echo 'ruok' | nc localhost 2181"
-  #       ]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   networks:
-  #     - confluent
-
-  # kafka1:
-  #   container_name: kafka1
-  #   image: confluentinc/cp-kafka:latest
-  #   depends_on:
-  #     - zookeeper
-  #   ports:
-  #     - 9092:9092
-  #     - 29092:29092
-  #   environment:
-  #     KAFKA_BROKER_ID: 1
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     ALLOW_PLAINTEXT_LISTENER: yes
-  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:9092,PLAINTEXT_HOST://localhost:29092
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
-  #     KAFKA_CFG_LISTENERS: PLAINTEXT://0.0.0.0:9092
-  #   networks:
-  #     - confluent
-  #   healthcheck:
-  #     test: ["CMD", "bash", "-c", 'echo > /dev/tcp/localhost/9092']
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-
-  # kafka2:
-  #   container_name: kafka2
-  #   image: confluentinc/cp-kafka:latest
-  #   depends_on:
-  #     - zookeeper
-  #   ports:
-  #     - 9093:9093
-  #     - 29093:29093
-  #   environment:
-  #     KAFKA_BROKER_ID: 2
-  #     KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-  #     ALLOW_PLAINTEXT_LISTENER: yes
-  #     KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:9093,PLAINTEXT_HOST://localhost:29093
-  #     KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-  #     KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-  #     KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 2
-  #     KAFKA_CFG_LISTENERS: PLAINTEXT://0.0.0.0:9093
-  #   networks:
-  #     - confluent
-  #   healthcheck:
-  #     test: ["CMD", "bash", "-c", 'echo > /dev/tcp/localhost/9093']
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-
+    volumes:
+      - ./kafka/server.properties:/etc/kafka/server.properties
+    platform: linux/amd64
 
   scala-stream-collector:
     container_name: collector
@@ -177,6 +113,7 @@ services:
       - ./snowplow/collector-config:/snowplow/
     networks:
       - confluent
+    platform: linux/amd64
 
   stream-enrich:
     container_name: enrich
@@ -196,6 +133,15 @@ services:
       - ./snowplow/enrich-config:/snowplow
     networks:
       - confluent
+    deploy:
+      resources:
+        limits:
+          memory: 2g
+          cpus: "1.0"
+        reservations:
+          memory: 1g
+          cpus: "0.5"
+    platform: linux/amd64
 
   # db cho iglu server
   postgresdb:
@@ -212,6 +158,7 @@ services:
       - ./snowplow/postgres-data:/var/lib/postgresql@14/data
     networks:
       - confluent
+    platform: linux/amd64
 
   iglu-server:
     container_name: iglu-server
@@ -225,6 +172,7 @@ services:
     command: "--config /iglu/config.hocon"
     networks:
       - confluent
+    platform: linux/amd64
   
   spark-master:
     <<: *spark-common
@@ -234,6 +182,7 @@ services:
       - "9090:8080"
       - "7077:7077"
       - "22:22"
+    platform: linux/amd64
 
   spark-worker:
     <<: *spark-common
@@ -246,6 +195,7 @@ services:
       SPARK_WORKER_CORES: 2
       SPARK_WORKER_MEMORY: 1g
       SPARK_MASTER_URL: spark://spark-master:7077
+    platform: linux/amd64
   
   postgres:
     image: postgres:latest
@@ -256,6 +206,7 @@ services:
       - POSTGRES_DB=airflow
     networks:
       - confluent
+    platform: linux/amd64
 
   webserver:
     <<: *airflow-common
@@ -265,6 +216,7 @@ services:
       - "8082:8080"
     depends_on:
       - scheduler
+    platform: linux/amd64
 
   scheduler:
     <<: *airflow-common
@@ -276,19 +228,35 @@ services:
     image: elasticsearch:8.13.0
     container_name: elasticsearch
     ports:
-      - 9200:9200
-      - 9300:9300
+      - "9200:9200"
+      - "9300:9300"
     mem_limit: 2g
     cpus: 2
+    # deploy:
+    #   resources:
+    #     limits:
+    #       memory: 2g
+    #       cpus: "1.0"
     environment:
       - cluster.name=streaming_event
       - node.name=elasticsearch   # 1 node trên cluster
       - discovery.type=single-node
       - xpack.security.enabled=false
+      - cluster.routing.allocation.disk.watermark.low=80%
+      - cluster.routing.allocation.disk.watermark.high=90%
+      - cluster.routing.allocation.disk.watermark.flood_stage=95%
+      - cluster.routing.allocation.enable=all
+      - cluster.info.update.interval=1m
     volumes:
-      - ./data:/var/lib/elasticsearch/data
+      - ./esnode:/var/lib/elasticsearch/data
     networks:
       - confluent
+    # healthcheck:
+    #   test: ["CMD-SHELL", "curl -s http://localhost:9200/_cat/health | grep -o 'green\\|yellow' > /dev/null || exit 1"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 12
+    platform: linux/amd64
 
   db:
     image: mysql
@@ -303,6 +271,7 @@ services:
       - "3306:3306"
     volumes:
       - ./data:/var/lib/mysql
+    platform: linux/amd64
 
 networks:
   confluent:

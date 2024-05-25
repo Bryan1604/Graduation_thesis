@@ -27,7 +27,7 @@ lý do ko chạy được postgress -> mount sai : ./snowplow/postgres-data:/var
 - Lệnh chạy trên spark spark: vd
     docker exec -it spark-master spark-submit \
     --master spark://spark-master:7077 \
-    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/python/wordcount.py
+    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/wordcount.py
 
 
 Note :
@@ -38,20 +38,27 @@ Note :
         - cập nhật view count
         - xu ly cac don dat hang -> lay luon trong database cu khi co 1 don duoc dat của người dùng : total_purchase, total_purchase_value, avg_purchase_value, min_purchase_value
         - api segment, UI segment
+        - sua lai API lay thong tin khach hang ( thong tin cac san pham yeu thich),
+        - su ly du lieu date ( birthday)
+        - loc theo nhieu dieu kien
 
     inprogress :     
-        - sua lai API lay thong tin khach hang ( thong tin cac san pham yeu thich, the loai yeu thich)
-        - có thể phải lọc khách hàng theo nhiều điều kiện trong 1 phân khúc (nhung voi 1 so dieu kien chua xet het)
-        - can chuong trinh theo doi hoat dong chay lien tuc  => khi khoi chay may chu spark -> cho chay luon ??
-
+        - connect voi database spark
+        - Lay san pham yeu thich thoi gian gan day
+        - config airflow (uu tien cao nhat) 
+        - Loc theo dieu kien include
+        - can chuong trinh theo doi hoat dong chay lien tuc  => khi khoi chay may chu spark -> cho chay luon ?? => deu can submit len spark ( co nen su dung file.sh)
+        
+        
     Can lam luon :
         - Khi co segment duoc tao moi hoac xoa -> goi toi airlow de chay code tao moi 1 segment
 
     todo :
+        - sua lai API lay thong tin khach hang ( the loai yeu thich)
         - them 1 truong update_time vao bang customer_product -> cap nhat thoi gian xem san pham cua nguoi dung ( chưa biết có cần thiết không)
         - cap nhap the loai ma nguoi dung quan tam nhieu nhat
         - tạo segment theo thói quen mua sắm
-        - tao segment theo  các sản phẩm quan tâm
+        - tao segment theo  các sản phẩm quan tâm ( su dung include theo id ? ten san pham)
         - segment theo tinhf trạng khách hàng
         - segment dựa theo tương tác của khách hàng 
         - segment dựa theo hành vi của khách hàng

@@ -44,10 +44,10 @@ consumer = KafkaConsumer(
 
 # load last commited offset
 last_offset = load_offset()
-if last_offset is not None:
-    for partition in consumer.partitions_for_topic(KAFKA_TOPIC_TEST):
-        tp = TopicPartition(KAFKA_TOPIC_TEST, partition)
-        consumer.seek(tp, last_offset)
+# if last_offset is not None:
+#     for partition in consumer.partitions_for_topic(KAFKA_TOPIC_TEST):
+#         tp = TopicPartition(KAFKA_TOPIC_TEST, partition)
+#         consumer.seek(tp, last_offset)
 
 def find_json_strings(data):
     json_strings = []
@@ -72,7 +72,7 @@ def connect_elasticsearch():
         index_setting = {
             "settings": {
                 "number_of_shards": 1,
-                "number_of_replicas": 0
+                "number_of_replicas": 1
             },
             "mappings": {
                 "properties": {
@@ -105,7 +105,8 @@ def connect_elasticsearch():
             print(f"Index {index_name} created successfully")
         except Exception as e:
             print(f"Failed to create index {index_name}: {e}")
-
+    else:
+        print('has index')
 # def update_total_view(user_id, product_id):
 #     if cdp_db.is_connected():
 #         try:

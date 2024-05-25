@@ -16,7 +16,7 @@ sqlContext = SparkSession(spark)
 spark.sparkContext.setLogLevel("ERROR")
 
 # Database connection properties
-db_url = 'jdbc:mysql://192.168.12.104:3306/CDP_DB'
+db_url = 'jdbc:mysql://192.168.12.111:3306/CDP_DB'
 db_properties = {
     'driver': 'com.mysql.cj.jdbc.Driver',
     'user': 'root',
@@ -25,7 +25,7 @@ db_properties = {
 
 # Thiết lập thông tin kết nối toi cdp database
 config_cdp_db = {
-    'host': '192.168.12.104',           
+    'host': '192.168.12.111',           
     'user': 'root',                
     'password': '12345678',   
     'database': 'CDP_DB',    
@@ -55,31 +55,16 @@ def filterCustomer(customerdf, segmentdf) :
     for segment in segmentdf.collect():
         conditions_json = segment['rule']
         conditions = json.loads(conditions_json)
-        # customers = customerdf.filter((customerdf[condition['field']] > condition['value']))
-        
-        filter_expresstion = "AND".join([combile_operator(cond['condition'], cond['operator'], cond['value']) for cond in conditions])
+        filter_expresstion = " AND ".join([combile_operator(cond['condition'], cond['operator'],cond['type'], cond['value']) for cond in conditions])
         customers = customerdf.filter(expr(filter_expresstion))
         customers.show()
         updateSegmentCustomer(customers, segment['segment_id'])
-        
     
 # xoa du lieu cu khi duoc cap nhat
 def deleteSegmentCustomer():
     return
 
-# def combile_condition(df: DataFrame, conditions: list) :
-#     return df.filter(reduce(lambda x, y : x & y, [col(cond.split()[0]).cast(cond.split()[1]) for cond in conditions] ))
-
-
-
 if __name__ == "__main__":
-    #vi du ve 1 dieu kien cua segment
-    segmentInfo = {
-            'field' : SegmentField.TOTAL_PRODUCT_VIEW,
-            'operator' : Operator.GREATER_THAN,
-            'type': DataType.INTEGER,
-            'value': 18
-    }
     # connect to mysql cdp_db
     cdp_db = mysql.connector.connect(**config_cdp_db)
     cdp_cursor = cdp_db.cursor()

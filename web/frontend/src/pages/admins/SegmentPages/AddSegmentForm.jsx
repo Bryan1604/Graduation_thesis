@@ -43,7 +43,7 @@ export const AddSegmentForm = () => {
       // Fetch or set the condition, operator, and type options here
       setConditionOptions(["gender", "birthday", "place", "total_product_view", "total_purchase", "total_purchase_value", "min_purchase_value", "favorite_products"]);
       setOperatorOptions(["EQUAL", "GREATER_THAN", "LESS_THAN", "GREATER_OR_EQUAL", "LESS_OR_EQUAL", "INCLUDES", "NOT_EQUAL", "NOT_INCLUDES"]);
-      setTypeOptions(["INTEGER", "LONG", "FLOAT", "TIMESTAMP", "STRING", "DATETIME", "BOOLEAN"]);
+      setTypeOptions(["INTEGER", "LONG", "FLOAT", "TIMESTAMP", "STRING", "DATE", "BOOLEAN"]);
     };
 
     fetchData();

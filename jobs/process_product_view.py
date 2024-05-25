@@ -1,10 +1,5 @@
-import os
-import json
-import re
 import mysql.connector
-from elasticsearch import Elasticsearch
-from utils.sqlUtils import config_cdp_db, config_server_db
-from kafka import KafkaConsumer, TopicPartition
+from utils.sqlUtils import config_cdp_db
 
 # connect to mysql cdp_db
 cdp_db = mysql.connector.connect(**config_cdp_db)

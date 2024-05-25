@@ -124,13 +124,11 @@ services:
     ports:
       - "3306:3306"
     volumes:
-<<<<<<< HEAD
       - ./data:/var/lib/mysql
   # iglu-server:
   #   image: dinhphu/snowplow-iglu:1.0.0
   #   container_name: iglu-server
   #   # restart: always
-=======
       - ./iglu-server-config/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./postgres-data:/var/lib/postgresql/data
     networks:
@@ -138,7 +136,6 @@ services:
   # spark-master:
   #   image: bitnami/spark:latest
   #   command: bin/spark-class org.apache.spark.deploy.master.Master
->>>>>>> kafka
   #   ports:
   #     - "9090:8080"
   #     - "7077:7077"
