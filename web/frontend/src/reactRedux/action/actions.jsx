@@ -20,7 +20,7 @@ export const createCartItemAction = (email, productId, size, quantity, price, na
       let res = await createCartItem(email, productId, size, quantity, category);
       if (res && res.data.errCode === 0) {
         console.log("id : " + productId + " cate : " + category + " price : " + price + " qty : " + quantity + " size : " + size + name);
-        AddProduct(name, Number(price), String(productId), Number(category), size, (quantity))
+        AddProduct(name, Number(price), String(productId), category, size, (quantity))
         dispatch(createItemCartPayLoad());
         dispatch(getListItem(email));
       }

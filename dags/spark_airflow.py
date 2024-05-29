@@ -25,16 +25,30 @@ start = PythonOperator(
 #     dag = dag
 # )
 
-process_long_hobbies = SparkSubmitOperator(
-    task_id = "process_long_hobbies",
-    conn_id = "spark-connect",
-    application = "jobs/process_long_hobbies.py",
+# process_long_hobbies = SparkSubmitOperator(
+    # task_id = "process_long_hobbies",
+    # conn_id = "spark-connect",
+    # application = "jobs/process_long_hobbies.py",
+    # packages = "mysql:mysql-connector-java:8.0.28",
     # total_executor_cores='2',
     # executor_cores='2',
     # executor_memory='1g',
     # num_executors='2',
     # driver_memory='1g',
-    dag = dag
+    # dag = dag
+# )
+
+process_segment = SparkSubmitOperator(
+    task_id = "process_segment",
+    conn_id = "spark-conn",
+    application = "./jobs/segments/process_segment.py",
+    packages = 'mysql:mysql-connector-java:8.0.28',
+    dag = dag,
+    # spark_binary="/opt/bitnami/spark/bin/spark-submit",
+    conf={
+        "spark.master": "spark://spark-master:7077",
+        "spark.submit.deployMode": "cluster"
+    }
 )
 
 end = PythonOperator(
@@ -42,4 +56,4 @@ end = PythonOperator(
     python_callable = lambda: print("Jobs completed successfully"),
     dag=dag
 )
-start >> process_long_hobbies >> end
+start >> process_segment >> end

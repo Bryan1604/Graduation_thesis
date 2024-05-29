@@ -196,6 +196,19 @@ services:
       SPARK_WORKER_MEMORY: 1g
       SPARK_MASTER_URL: spark://spark-master:7077
     platform: linux/amd64
+
+  spark-worker-2:
+    <<: *spark-common
+    container_name: spark-worker-2
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    depends_on:
+      - spark-master
+    environment:
+      SPARK_MODE: worker
+      SPARK_WORKER_CORES: 2
+      SPARK_WORKER_MEMORY: 1g
+      SPARK_MASTER_URL: spark://spark-master:7077
+    platform: linux/amd64
   
   postgres:
     image: postgres:latest
@@ -232,11 +245,6 @@ services:
       - "9300:9300"
     mem_limit: 2g
     cpus: 2
-    # deploy:
-    #   resources:
-    #     limits:
-    #       memory: 2g
-    #       cpus: "1.0"
     environment:
       - cluster.name=streaming_event
       - node.name=elasticsearch   # 1 node trên cluster

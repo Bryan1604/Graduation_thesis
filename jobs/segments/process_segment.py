@@ -1,19 +1,10 @@
 from pyspark.sql import SparkSession, DataFrame
-from segment_type import SegmentField, Operator, DataType
 from datetime import datetime
 from pyspark.sql.functions import reduce, col, expr
-import sys
-import os
 import mysql.connector
 import json
-from segment_type import combile_operator
-
-spark = SparkSession.builder.appName('ProcessSegment')\
-    .config('spark.jars.packages', 'com.mysql:mysql-connector-j:8.4.0') \
-    .getOrCreate()
-
-sqlContext = SparkSession(spark)
-spark.sparkContext.setLogLevel("ERROR")
+from jobs.segments.combile import combile_operator
+from utils.sqlUtils import config_cdp_db
 
 # Database connection properties
 db_url = 'jdbc:mysql://192.168.12.111:3306/CDP_DB'
@@ -42,9 +33,8 @@ def load_df(table_name):
 
 #update bang segment_customer
 def updateSegmentCustomer(customers, segmentId) :
-    update_time = datetime.now()
     for customer in customers.collect():
-        cdp_cursor.execute("INSERT INTO customer_segment (customer_id, segment_id, update_time) VALUES (%s, %s, %s) ON DUPLICATE KEY UPDATE customer_id = VALUES(customer_id), segment_id = VALUES(segment_id)", (customer['customer_id'], segmentId,update_time ))
+        cdp_cursor.execute("INSERT INTO customer_segment (customer_id, segment_id) VALUES (%s, %s) ON DUPLICATE KEY UPDATE customer_id = VALUES(customer_id), segment_id = VALUES(segment_id)", (customer['customer_id'], segmentId))
     cdp_db.commit()
     print("Successfully updated customer_segment")
 
@@ -65,6 +55,13 @@ def deleteSegmentCustomer():
     return
 
 if __name__ == "__main__":
+    spark = SparkSession.builder.appName('ProcessSegment')\
+        .config('spark.jars.packages', 'mysql:mysql-connector-java:8.0.28') \
+        .getOrCreate()
+
+    sqlContext = SparkSession(spark)
+    spark.sparkContext.setLogLevel("ERROR")
+    
     # connect to mysql cdp_db
     cdp_db = mysql.connector.connect(**config_cdp_db)
     cdp_cursor = cdp_db.cursor()

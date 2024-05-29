@@ -41,13 +41,16 @@ Note :
         - sua lai API lay thong tin khach hang ( thong tin cac san pham yeu thich),
         - su ly du lieu date ( birthday)
         - loc theo nhieu dieu kien
+        - spark streaming và đẩy dữ liệu lên elastic search
 
-    inprogress :     
-        - connect voi database spark
-        - Lay san pham yeu thich thoi gian gan day
+    inprogress :  
+        - Lay ra nhung the loai yeu thich trong thoi gian gan day   ( trong 3 ngay gan nhat) 
+        - connect voi database mysql spark (??), su dung package cho spark-mysql
+
         - config airflow (uu tien cao nhat) 
         - Loc theo dieu kien include
         - can chuong trinh theo doi hoat dong chay lien tuc  => khi khoi chay may chu spark -> cho chay luon ?? => deu can submit len spark ( co nen su dung file.sh)
+
         
         
     Can lam luon :
@@ -65,6 +68,7 @@ Note :
         link : https://blog.hub-js.com/segment-linh-hoat-tren-extech/
 
         - connect airflow voi spark
+        - thi thoang kafka1  bị down đột ngột
 
        
 
@@ -77,3 +81,15 @@ Note :
         type: "", lưu thông tin về toán tử
         value: "", lưu thông tin về giá trị
      }
+
+
+-- connect airflow voi spark-master bang ssh key
+- tao ssh key trong airflow , khoa coong khai duoc luu vao  file /home/airflow/.ssh/id_rsa.pub
+- truy cap vao docker spark master de sao chep khoa cong khai vua tao vao file authorized_keys
+    docker exec -it spark-master /bin/bash
+    mkdir -p ~/.ssh
+    echo "your_public_key_content" >> ~/.ssh/authorized_keys
+    chmod 600 ~/.ssh/authorized_keys
+    chmod 700 ~/.ssh
+- tai ssh server tren docker spark-master, khoi dong ssh server : service ssh start
+- truy cap tu airflow : ssh root@spark-master

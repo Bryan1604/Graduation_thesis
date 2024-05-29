@@ -12,7 +12,8 @@ WORKDIR /opt/bitnami/spark
 # Sử dụng quyền sudo để tạo thư mục và cập nhật các gói
 USER root
 RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk
+    apt-get install -y openjdk-17-jdk && \
+    apt-get install -y openssh-server
 
 # Sao chép tệp requirements.txt vào container và cài đặt các thư viện Python cần thiết
 COPY requirements.txt /opt/bitnami/spark/requirements.txt
