@@ -5,6 +5,7 @@
 
     .wrap {
         margin: 20px 10px;
+        background-color: white;
 
         .cd-btn {
             text-align: right;
@@ -66,6 +67,38 @@
 
             select {
                 width: 20%; // Chiếm 30% chiều rộng của cha
+            }
+        }
+
+        .title {
+            background-color: rgb(223, 223, 223);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+            h1 {
+                text-align: center;
+                padding: 4px;
+                font-size: 24px;
+                color: #4f4f4f;
+            }
+        }
+        .info {
+            display: flex;
+            justify-content: space-between;
+        
+            .info_item {
+                width: 48%;
+                padding: 8px;
+            
+                .info_item__title {
+                    border-bottom: 1px solid #919191;
+                    padding: 8px 0;
+                    color: #4f4f4f;
+                }
+            
+                .info_item__content {
+                    padding: 8px 0;
+                    color: #919191;
+                }
             }
         }
 

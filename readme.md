@@ -29,6 +29,9 @@ lý do ko chạy được postgress -> mount sai : ./snowplow/postgres-data:/var
     --master spark://spark-master:7077 \
     --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/wordcount.py
 
+    docker exec -it spark-master spark-submit \
+    --master spark://spark-master:7077 \
+    --packages mysql:mysql-connector-java:8.0.28 jobs/segments/process_segment.py
 
 Note :
     Done:
@@ -42,12 +45,12 @@ Note :
         - su ly du lieu date ( birthday)
         - loc theo nhieu dieu kien
         - spark streaming và đẩy dữ liệu lên elastic search
+        - xử lý thông tin về sở thích ngắn hạn
 
     inprogress :  
-        - Lay ra nhung the loai yeu thich trong thoi gian gan day   ( trong 3 ngay gan nhat) 
-        - connect voi database mysql spark (??), su dung package cho spark-mysql
-
         - config airflow (uu tien cao nhat) 
+        - xoá nhưng thể loại không có cập nhât ( trong 3 ngay gan nhat) (tạo API,..  hay dung nhu long_hobbies)
+        - connect voi database mysql spark (??), su dung package cho spark-mysql
         - Loc theo dieu kien include
         - can chuong trinh theo doi hoat dong chay lien tuc  => khi khoi chay may chu spark -> cho chay luon ?? => deu can submit len spark ( co nen su dung file.sh)
 

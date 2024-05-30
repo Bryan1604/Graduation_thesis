@@ -33,7 +33,7 @@
 # # Copy code của ứng dụng Spark Streaming vào hình ảnh
 # COPY ./spark/spark_streaming.py /app/spark_streaming.py
 
-FROM apache/airflow
+FROM apache/airflow:2.7.1
 
 USER root
 RUN apt-get update && \

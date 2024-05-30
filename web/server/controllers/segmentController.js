@@ -33,12 +33,10 @@ const segmentController = {
     }
   },
   create: async (req, res) => {
-    const create_time = moment().format('YYYY-MM-DD HH:mm:ss')
-    const update_time = create_time
     try {
       const { segment_name, rule } = req.body;
-      const insertSql = "INSERT INTO segments (segment_name, rule, create_time, update_time) VALUES (?, ?, ?, ?)";
-      const [rows, fields] = await connection.promise().query(insertSql, [segment_name, rule, create_time, update_time]);
+      const insertSql = "INSERT INTO segments (segment_name, rule, create_time, update_time) VALUES (?, ?)";
+      const [rows, fields] = await connection.promise().query(insertSql, [segment_name, rule]);
 
       res.json({
         data: rows,

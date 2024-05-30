@@ -4,10 +4,10 @@ from pyspark.sql.functions import reduce, col, expr
 import mysql.connector
 import json
 from jobs.segments.combile import combile_operator
-from utils.sqlUtils import config_cdp_db
+from jobs.utils.sqlUtils import config_cdp_db
 
 # Database connection properties
-db_url = 'jdbc:mysql://192.168.12.111:3306/CDP_DB'
+db_url = 'jdbc:mysql://192.168.10.134:3306/CDP_DB'
 db_properties = {
     'driver': 'com.mysql.cj.jdbc.Driver',
     'user': 'root',
@@ -16,7 +16,7 @@ db_properties = {
 
 # Thiết lập thông tin kết nối toi cdp database
 config_cdp_db = {
-    'host': '192.168.12.111',           
+    'host': '192.168.10.134',           
     'user': 'root',                
     'password': '12345678',   
     'database': 'CDP_DB',    
@@ -35,6 +35,7 @@ def load_df(table_name):
 def updateSegmentCustomer(customers, segmentId) :
     for customer in customers.collect():
         cdp_cursor.execute("INSERT INTO customer_segment (customer_id, segment_id) VALUES (%s, %s) ON DUPLICATE KEY UPDATE customer_id = VALUES(customer_id), segment_id = VALUES(segment_id)", (customer['customer_id'], segmentId))
+    cdp_cursor.execute("UPDATE segments SET updated_at= CURRENT_TIMESTAMP WHERE segment_id = %s", (segmentId,))
     cdp_db.commit()
     print("Successfully updated customer_segment")
 

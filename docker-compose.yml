@@ -234,7 +234,7 @@ services:
   scheduler:
     <<: *airflow-common
     container_name: airflow-scheduler
-    command: bash -c "airflow db migrate && airflow users create --username admin --firstname luong --lastname vu --role Admin --email luongvuhs@gmail.com --password admin && airflow scheduler"
+    command: bash -c "airflow db init && airflow users create --username admin --firstname luong --lastname vu --role Admin --email luongvuhs@gmail.com --password admin && airflow scheduler"
 
   #elastic search 
   elasticsearch:

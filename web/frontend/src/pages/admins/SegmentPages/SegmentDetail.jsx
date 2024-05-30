@@ -4,8 +4,7 @@ import customStyles from "../ProductPages/CustomTable";
 import { useEffect, useState } from "react";
 import { Link , useParams} from "react-router-dom";
 import DataTable from "react-data-table-component";
-import { Modal, Button } from "react-bootstrap";
-import { getSegment, deleteSegment, createSegment, getOneSegment } from "../../../services/admin/segment";
+import {getOneSegment } from "../../../services/admin/segment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
@@ -98,21 +97,20 @@ const SegmentDetail = () => {
                 </button>
             </div>
 
-            <div>
-                <h3>Thông tin phân khúc</h3>
+            <div className={cx("info")} >
                 <h5>Tên phân khúc : {segment.segment_name}</h5>
-                {/* Hiển thị các rule */}
-                    <div>
-                        {segment.rule.map((r, index) => (
-                            <div key={index}>
-                                <h5>Điều kiện : {r.condition} {r.operator} {r.value}</h5>
-                            </div>
-                        ))}
-                    </div>
-                <h5>Thời gian khởi tạo : { segment.create_time ? formatDateTime(segment.create_time) : ""}</h5>
-                <h5>Thời gian cập nhật : {segment.update_time ? formatDateTime(segment.update_time) : ""}</h5>
+                <div>
+                    {segment.rule.map((r, index) => (
+                        <div key={index}>
+                            <h5>Điều kiện : {r.condition} {r.operator} {r.value}</h5>
+                        </div>
+                    ))}
+                </div>
+                <h5>Thời gian khởi tạo : { segment.create_time ? formatDateTime(segment.created_at) : ""}</h5>
+                <h5>Thời gian cập nhật : {segment.update_time ? formatDateTime(segment.updated_at) : ""}</h5>
+                <h5>Tổng số khách hàng trong phân khúc: {customers.length} </h5>
             </div>
-
+                
             <DataTable
                 columns={columns}
                 data={customers}

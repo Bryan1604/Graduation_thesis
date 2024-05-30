@@ -1,19 +1,20 @@
 $left-bg-color: #f0f0f0;
 $right-bg-color: #e0e0e0;
+
 * {
-    margin: 0;
-    box-sizing: border-box;
-    padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  padding: 0;
 
-    h3 {
-        margin: 20px 10px;
-    }
+  h3 {
+    margin: 20px 10px;
+  }
 
 
-    .userList {
-        margin: 20px 10px;
+  .userList {
+    margin: 20px 10px;
 
-        /* input {
+    /* input {
             background-image: url(https://www.w3schools.com/css/searchicon.png);
             background-position: 3px 3px;
             background-repeat: no-repeat;
@@ -21,55 +22,108 @@ $right-bg-color: #e0e0e0;
             border-radius: 3px;
             padding: 2px 15px 2px 30px;
         } */
-        input {
+    input {
 
 
-            width: 30%;
-            height: 45px;
-            font-size: 14px;
-            padding: 0 10px;
+      width: 30%;
+      height: 45px;
+      font-size: 14px;
+      padding: 0 10px;
 
-            background: transparent;
-            color: #363636;
-            outline: none;
-            padding: 0 50px 0 15px;
-            border: 1px solid #ebebeb;
-            overflow: hidden;
-            background: #fff;
-            background-image: url(https://img.icons8.com/ios/50/search--v1.png);
-            background-repeat: no-repeat;
-            background-position: calc(100% - 5px) center;
-            background-size: 30px;
-            border-radius: 9999px !important;
-            padding: 3px !important;
-            padding-left: 15px !important;
-            border: 1px solid;
-            transition: width 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+      background: transparent;
+      color: #363636;
+      outline: none;
+      padding: 0 50px 0 15px;
+      border: 1px solid #ebebeb;
+      overflow: hidden;
+      background: #fff;
+      background-image: url(https://img.icons8.com/ios/50/search--v1.png);
+      background-repeat: no-repeat;
+      background-position: calc(100% - 5px) center;
+      background-size: 30px;
+      border-radius: 9999px !important;
+      padding: 3px !important;
+      padding-left: 15px !important;
+      border: 1px solid;
+      transition: width 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 
-        }
-
-
-        input:focus {
-            width: 60%;
-            outline: none;
-        }
     }
+
+
+    input:focus {
+      width: 60%;
+      outline: none;
+    }
+  }
 }
 
 .container {
-  display: flex;
+  margin: 0 auto;
   height: 100vh; // Full viewport height
 
-  .left-pane, .right-pane {
-    flex: 1; // Each pane takes up equal space
+  .basic-infomation,
+  .addition-infomation {
+    // Each pane takes up equal space
     padding: 20px;
+    max-width: auto;
+    margin: 0 auto;
+    background-color: white;
+
+    .title {
+      background-color: rgb(223, 223, 223);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      h1 {
+        text-align: center;
+        padding: 4px;
+        font-size: 24px;
+        color: #4f4f4f;
+      }
+    }
+
+    .info {
+      display: flex;
+      justify-content: space-between;
+
+      .info_item {
+        width: 48%;
+        padding: 8px;
+
+        .info_item__title {
+          border-bottom: 1px solid #919191;
+          padding: 8px 0;
+          color: #4f4f4f;
+        }
+
+        .info_item__content {
+          padding: 8px 0;
+          color: #919191;
+        }
+      }
+    }
+
+    .more_info {
+      display: flex;
+      justify-content: space-between;
+
+      .more_info_item {
+        width: 33%;
+        padding: 8px;
+
+        .more_info_item__title {
+          border-bottom: 1px solid #919191;
+          padding: 8px 0;
+          color: #4f4f4f;
+        }
+
+        .more_info_item__content {
+          color: #6b7075;
+          padding: 8px 0;
+        }
+
+      }
+    }
   }
 
-  .left-pane {
-    background-color: $left-bg-color;
-  }
 
-  .right-pane {
-    background-color: $right-bg-color;
-  }
 }
