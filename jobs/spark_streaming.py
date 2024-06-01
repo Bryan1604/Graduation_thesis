@@ -4,24 +4,25 @@ from pyspark.sql.functions import col,from_json, udf, when
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
 from utils.sqlUtils import config_cdp_db
 from utils.esUtils import es, create_es_index, INDEX_NAME
+from extensions.json_extension import find_json_strings
 import json
 
-def find_json_strings(data):
-        json_strings = []
-        start = data.find('{')
-        while start != -1:
-            counter = 1
-            end = start + 1
-            while counter > 0 and end < len(data):
-                if data[end] == '{':
-                    counter += 1
-                elif data[end] == '}':
-                    counter -= 1
-                end += 1
-            if counter == 0:
-                json_strings.append(data[start:end])
-            start = data.find('{', end)
-        return json_strings
+# def find_json_strings(data):
+#         json_strings = []
+#         start = data.find('{')
+#         while start != -1:
+#             counter = 1
+#             end = start + 1
+#             while counter > 0 and end < len(data):
+#                 if data[end] == '{':
+#                     counter += 1
+#                 elif data[end] == '}':
+#                     counter -= 1
+#                 end += 1
+#             if counter == 0:
+#                 json_strings.append(data[start:end])
+#             start = data.find('{', end)
+#         return json_strings
 
 
 # # Hàm trích xuất dữ liệu người dùng từ JSON

@@ -34,8 +34,8 @@ def load_df(table_name):
 #update bang segment_customer
 def updateSegmentCustomer(customers, segmentId) :
     for customer in customers.collect():
-        cdp_cursor.execute("INSERT INTO customer_segment (customer_id, segment_id) VALUES (%s, %s) ON DUPLICATE KEY UPDATE customer_id = VALUES(customer_id), segment_id = VALUES(segment_id)", (customer['customer_id'], segmentId))
-    cdp_cursor.execute("UPDATE segments SET updated_at= CURRENT_TIMESTAMP WHERE segment_id = %s", (segmentId,))
+        cdp_cursor.execute("INSERT INTO customer_segment (customer_id, segment_id) VALUES (%s, %s) ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP ,customer_id = VALUES(customer_id), segment_id = VALUES(segment_id)", (customer['customer_id'], segmentId))
+    #cdp_cursor.execute("UPDATE segments SET updated_at= CURRENT_TIMESTAMP WHERE segment_id = %s", (segmentId,))
     cdp_db.commit()
     print("Successfully updated customer_segment")
 

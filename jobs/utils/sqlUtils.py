@@ -20,7 +20,7 @@ config_server_db = {
 # Thiết lập thông tin kết nối toi cdp database
 config_cdp_db = {
     # 'host': 'localhost',  
-    'host': '192.168.12.111',     
+    'host': '192.168.10.134',     
     'user': 'root',                
     'password': '12345678',   
     'database': 'CDP_DB',    

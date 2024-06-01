@@ -45,8 +45,6 @@ try:
                 print("Inserted data for product ID:", row[0])
         cdp_db.commit()
         
-       
-        
 except mysql.connector.Error as err:
     print(f"Error: {err}")
 finally:

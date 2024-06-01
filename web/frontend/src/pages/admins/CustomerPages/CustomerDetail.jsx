@@ -14,6 +14,7 @@ const CustomerDetail = () => {
     const { id } = useParams();
     const [customer, setCustomer] = useState({});
     const [favoriteProducts, setFavoriteProducts] = useState([]);
+    const [favoriteCategories, setFavoriteCategories] = useState([]);
 
     const goBack = () => {
         navigate(-1);
@@ -35,14 +36,13 @@ const CustomerDetail = () => {
                 const data = await getOneCustomer(id);
                 setCustomer(data.data);
                 setFavoriteProducts(data.favoriteProducts);
+                setFavoriteCategories(data.favoriteCategories);
             } catch (error) {
                 console.error("Error fetching customer list:", error);
             }
         }
         getCustomer();
     }, []);
-    
-    const favoriteProductsString = favoriteProducts.join(', ');
 
     return (
         <div>
@@ -85,19 +85,6 @@ const CustomerDetail = () => {
                             <div class={cx("more_info_item__content")}>{customer.place}</div>
                         </div>
                     </div>
-                    {/* <h3>Thông tin cơ bản của khách hàng có id : {id}</h3>
-                    <h4 className="title">Tên </h4>
-                    <h5> {customer.fullname} </h5>
-                    <h4 className="title">Giới tính  </h4>  
-                    <h5> {customer.gender == 0 ? 'Nam' : 'Nữ'} </h5>
-                    <h4 className="title">Ngày sinh  </h4> 
-                    <h5>{customer.birthday ? formatDateTime(customer.birthday) : ""}</h5>
-                    <h4 className="title">Email  </h4> 
-                    <h5> {customer.email}</h5>
-                    <h4 className="title">Số điện thoại  </h4>
-                    <h5>{customer.phone_number}</h5>
-                    <h4 className="title">Địa chỉ  </h4>
-                    <h5> {customer.place} </h5> */}
                 </div>
                 <div className={cx("addition-infomation")}>
                     <div class={cx("title")}>
@@ -117,8 +104,16 @@ const CustomerDetail = () => {
                             </div>
                         </div>
                         <div class={cx("info_item")}>
-                            <div class={cx("info_item__title")}>Các loại sản phẩm yêu thích gần đây</div>
-                            <div class={cx("info_item__content")}>{customer.email}</div>
+                            <div class={cx("info_item__title")}>Các loại sản phẩm yêu thích gần đây trong 3 ngày gần đây</div>
+                            <div>
+                                {favoriteCategories.map((category, index) => (
+                                    <div key={index}>
+                                        <a href={`/categories/${category}`} target="_blank" rel="noopener noreferrer">
+                                            - {category}
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                         
                     </div>
@@ -135,44 +130,6 @@ const CustomerDetail = () => {
                     </div>
                 </div>
             </div>
-            {/* <div className={cx("userList")}>
-                <div className={cx("productDescription", "row")}>
-                    <input className="productId" type="text" value={id} disabled style={{ display: "none" }} />
-                    <div className={cx("divLeft", "col-12", "col-lg-6")}>
-                        <img src="https://www.google.com/imgres?imgurl=https%3A%2F%2Fcellphones.com.vn%2Fsforum%2Fwp-content%2Fuploads%2F2023%2F10%2Fanh-avatar-facebook-7-1.jpg&tbnid=LAWh-_VNeRAAoM&vet=12ahUKEwiK0dq-7paGAxXrkK8BHbtyCBsQMygFegQIARB7..i&imgrefurl=https%3A%2F%2Fcellphones.com.vn%2Fsforum%2Fanh-avatar-facebook&docid=aTxttayw6IpBsM&w=850&h=850&q=avatar%20facebook&ved=2ahUKEwiK0dq-7paGAxXrkK8BHbtyCBsQMygFegQIARB7" alt="Item 1" />
-                    </div>
-                    <div className={cx("divRight", "col-xs-12", "col-lg-6")}>
-                        <h3>Tên: </h3>
-                        <span className={cx("product_id_1")}>Mã sản phẩm: <span className={cx("product_id")}>{id}</span></span><br></br>
-                        <br></br>
-                        <span className={cx("price")}>đ</span>
-
-                        <div className={cx("select")}>
-                            <label for="cars">Choose a size:</label>
-
-                            <p>Số lượng:</p>
-                        </div>
-                        
-
-                        <div className={cx("product_describe")}>
-                            <div className={cx("product_describe_head")}>
-                                <h5>Mô tả sản phẩm</h5>
-                            </div>
-                            <div className={cx("product_describe_body")}>
-                                <p style={{
-                                    fontWeight: 100,
-                                    fontSize: '14px'
-                                }}
-                                >
-                                    Hêo 
-                                </p>
-                            </div>
-
-                        </div>
-
-                    </div>
-                </div>
-            </div> */}
         </div>
     );
 };

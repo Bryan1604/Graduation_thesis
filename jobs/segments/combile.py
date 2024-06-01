@@ -49,8 +49,6 @@ from pyspark.sql.functions import to_date
 def combile_type (type, value) :
     if type == 'INTEGER' :
         return int(value)
-    # elif type == 'LONG' :
-    #     return long(value)
     elif type == 'FLOAT':
         return float(value)
     elif type == 'TIMESTAMP':

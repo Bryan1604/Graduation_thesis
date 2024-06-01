@@ -34,7 +34,6 @@ const customerController = {
 
     // Lấy danh sách sản phẩm yêu thích
     const favoriteProductIds = customer.favorite_products ? customer.favorite_products.split(',') : [];
-
     let favoriteProducts = [];
     if (favoriteProductIds.length > 0) {
       const [productRows] = await connection_cdp.promise().query(
@@ -43,10 +42,19 @@ const customerController = {
       );
       favoriteProducts = productRows.map(row => row.product_name);
     }
+      
+    // Lay the loai yeu thich trong thoi gian gan day ( 3 ngay)
+    let favoriteCategories = [];
+    const [catrgoryRows] = await connection_cdp.promise().query(
+      "SELECT cate.* FROM categories as cate, customer_category as cc WHERE cate.category_id = cc.category_id AND cc.customer_id = ?", [customer.customer_id]
+    )
+      
+    favoriteCategories = catrgoryRows.map(row => row.category_name);
 
     res.json({
       data: customer,
-      favoriteProducts: favoriteProducts
+      favoriteProducts: favoriteProducts,
+      favoriteCategories: favoriteCategories,
     });
     } catch (error) {
       console.log(error);

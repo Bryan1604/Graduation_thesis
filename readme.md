@@ -27,7 +27,7 @@ lý do ko chạy được postgress -> mount sai : ./snowplow/postgres-data:/var
 - Lệnh chạy trên spark spark: vd
     docker exec -it spark-master spark-submit \
     --master spark://spark-master:7077 \
-    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/wordcount.py
+    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/spark_streaming.py
 
     docker exec -it spark-master spark-submit \
     --master spark://spark-master:7077 \
@@ -45,10 +45,11 @@ Note :
         - su ly du lieu date ( birthday)
         - loc theo nhieu dieu kien
         - spark streaming và đẩy dữ liệu lên elastic search
-        - xử lý thông tin về sở thích ngắn hạn
+        - xử lý thông tin về sở thích ngắn hạn  ===> nen de la 1,2,3,4      
+        - Xoa cac the loai yeu thich cu ( co thoi gian update qua 3 ngay truoc do)
 
     inprogress :  
-        - config airflow (uu tien cao nhat) 
+        - CONFIG AIRFLOW (UU TIEN CAO NHAT)
         - xoá nhưng thể loại không có cập nhât ( trong 3 ngay gan nhat) (tạo API,..  hay dung nhu long_hobbies)
         - connect voi database mysql spark (??), su dung package cho spark-mysql
         - Loc theo dieu kien include
@@ -57,6 +58,7 @@ Note :
         
         
     Can lam luon :
+
         - Khi co segment duoc tao moi hoac xoa -> goi toi airlow de chay code tao moi 1 segment
 
     todo :
@@ -74,9 +76,6 @@ Note :
         - thi thoang kafka1  bị down đột ngột
 
        
-
-  
-
     Điều kiện phân khúc được lưu dưới dạng json ??
      {
         field: "", : lưu thông tin về tên điều kiện 
@@ -96,3 +95,13 @@ Note :
     chmod 700 ~/.ssh
 - tai ssh server tren docker spark-master, khoi dong ssh server : service ssh start
 - truy cap tu airflow : ssh root@spark-master
+
+
+các xử lý cần được chạy liên tục
+- Spark_streaming 
+- process_favorite_category
+- process_product_view
+Chương trình xử lý batch , lập lịch hàng ngày :
+- process_long_hobbies
+- process_old_favorite_category
+- process_segment

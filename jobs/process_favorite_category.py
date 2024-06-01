@@ -2,9 +2,6 @@
 from pyspark.sql import SparkSession
 import mysql.connector
 from utils.sqlUtils import config_cdp_db
-from datetime import datetime
-# from pyspark.sql.functions import col, count, desc, collect_list, udf, lit
-from pyspark.sql.types import StringType
 from extensions.json_extension import find_json_strings
 import json
 
@@ -39,6 +36,8 @@ def update_customer_category(customer_id, category):
             cdp_db.rollback()
             
 def process_event(data):
+    # split_data = data.split('\t')
+    # clean_data = [item.strip() for item in split_data if item]
     jsonStrings = find_json_strings(data)
     user_info = json.loads(jsonStrings[0])["data"][2]["data"] if len(jsonStrings) > 0 and len(json.loads(jsonStrings[0])["data"]) > 2 else {}
     event_info = json.loads(jsonStrings[1])["data"]["data"]
@@ -49,6 +48,16 @@ def process_event(data):
         category = product_info["category"]
         print(product_info)
         update_customer_category(user_id, category)
+        
+        # event_data = {
+        #         "event_id": clean_data[6],
+        #         "time": clean_data[2],
+        #         "user_id": user_info.get("user_id"),
+        #         "event_type": event_info["action"],
+        #         "domain_userid": clean_data[12] if user_info.get("user_id") is None else clean_data[13],
+        #         "product_id": product_info["id"],
+        #         "category": product_info["category"],
+        # #     }
 
 def process_batch(df, batch_id):
     events = df.collect()
