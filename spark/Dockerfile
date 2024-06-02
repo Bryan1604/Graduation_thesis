@@ -25,6 +25,8 @@ RUN pip3 install --upgrade pip && pip install -r /opt/bitnami/spark/requirements
 # Tạo thư mục .ivy2 nếu chưa tồn tại
 RUN mkdir -p $IVY_HOME
 
+
+
 # Thiết lập lệnh khởi động
 ENTRYPOINT ["/opt/bitnami/scripts/spark/entrypoint.sh"]
 

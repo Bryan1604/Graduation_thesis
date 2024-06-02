@@ -173,11 +173,75 @@ services:
     networks:
       - confluent
     platform: linux/amd64
+
+  namenode:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: namenode
+    hostname: namenode
+    ports:
+      - "50070:50070"
+      - "9000:9000"
+    volumes:
+      - ./data/namenode:/usr/local/hadoop/hdfs/namenode
+    environment:
+      - CLUSTER_NAME=test-cluster
+    command: /usr/local/bin/start.sh namenode
+    networks:
+      - confluent
+    platform: linux/amd64
+
+  datanode:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: datanode
+    hostname: datanode
+    ports:
+      - "50075:50075"
+    volumes:
+      - ./data/datanode:/usr/local/hadoop/hdfs/datanode
+    environment:
+      - CLUSTER_NAME=test-cluster
+    command: /usr/local/bin/start.sh datanode
+    networks:
+      - confluent
+    platform: linux/amd64
+
+  resourcemanager:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: resourcemanager
+    hostname: resourcemanager
+    ports:
+      - "8088:8088"
+    command: /usr/local/bin/start.sh resourcemanager
+    networks:
+      - confluent
+    platform: linux/amd64
+
+  nodemanager:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: nodemanager
+    hostname: nodemanager
+    ports:
+      - "8042:8042"
+    command: /usr/local/bin/start.sh nodemanager
+    networks:
+      - confluent
+    platform: linux/amd64
   
   spark-master:
-    <<: *spark-common
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-master
-    command: bin/spark-class org.apache.spark.deploy.master.Master
+    hostname: spark-master
+    command: /usr/local/bin/start.sh spark-master
     ports:
       - "9090:8080"
       - "7077:7077"
@@ -185,28 +249,38 @@ services:
     platform: linux/amd64
 
   spark-worker:
-    <<: *spark-common
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-worker
-    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    hostname: spark-worker-1
+    command: /usr/local/bin/start.sh spark-worker
+    ports:
+      - "8083:8083"
     depends_on:
       - spark-master
     environment:
       SPARK_MODE: worker
-      SPARK_WORKER_CORES: 3
-      SPARK_WORKER_MEMORY: 4g
+      # SPARK_WORKER_CORES: 3
+      # SPARK_WORKER_MEMORY: 4g
       SPARK_MASTER_URL: spark://spark-master:7077
     platform: linux/amd64
 
   spark-worker-2:
-    <<: *spark-common
+    build: 
+      context: .
+      dockerfile: Dockerfile
     container_name: spark-worker-2
-    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
+    hostname: spark-worker-2
+    command: /usr/local/bin/start.sh spark-worker
+    ports:
+      - "8084:8084"
     depends_on:
       - spark-master
     environment:
       SPARK_MODE: worker
-      SPARK_WORKER_CORES: 3
-      SPARK_WORKER_MEMORY: 4g
+      # SPARK_WORKER_CORES: 3
+      # SPARK_WORKER_MEMORY: 4g
       SPARK_MASTER_URL: spark://spark-master:7077
     platform: linux/amd64
   
