@@ -6,15 +6,14 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 from datetime import datetime, timedelta
 
 dag = DAG(
-    dag_id = "sparking_flow",
+    dag_id = "Streaming_flow",
     default_args = {
-        "owner": "LuongVu",
+       "owner": "LuongVu",
         "start_date": datetime(2024,6,3,0,0),
         "retries": 5,
-        "retry_delay" : timedelta(minutes = 1)
+        "retry_delay" : timedelta(minutes = 5)
     },
-    schedule_interval = "0 0 * * *",
-    catchup=False
+    schedule_interval = "@daily"
 )
 
 start = PythonOperator(
@@ -57,43 +56,37 @@ start = PythonOperator(
 #     }
 # )
 
-process_old_favorite_category = BashOperator(
-    task_id='process_old_favorite_category',
-    bash_command='docker exec spark-master spark-submit \
-    --master spark://spark-master:7077 \
-    jobs/process_old_favorite_category.py',
-    dag=dag,
-)
-
+# chay realtime
 # process_favorite_category = BashOperator(
 #     task_id='process_favorite_category',
 #     bash_command='docker exec spark-master spark-submit \
 #     --master spark://spark-master:7077 \
-#     --conf spark.scheduler.pool=batch \
 #     --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
 #     jobs/process_favorite_category.py',
 #     dag=dag,
 # )
 
-process_long_hobbies = BashOperator(
-    task_id='process_long_hobbies',
-    bash_command='docker exec spark-master spark-submit \
-    --master spark://spark-master:7077 \
-    jobs/process_long_hobbies.py',
-    dag=dag,
+# --conf spark.scheduler.pool=streaming \
+process_event_streaming = BashOperator(
+    task_id='process_event_streaming',
+    bash_command="""
+        docker exec spark-master spark-submit \
+        --master spark://spark-master:7077 \
+        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/spark_streaming.py
+    """,
 )
 
-process_segment = BashOperator(
-    task_id='process_segment',
+process_event_streaming = BashOperator(
+    task_id='process_event_streaming',
     bash_command='docker exec spark-master spark-submit \
     --master spark://spark-master:7077 \
-    --packages mysql:mysql-connector-java:8.0.28 jobs/segments/process_segment.py',
-    dag=dag,
+    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/spark_streaming.py',
 )
+
 
 end = PythonOperator(
     task_id="end",
     python_callable = lambda: print("Jobs completed successfully"),
     dag=dag
 )
-start >> process_old_favorite_category >> process_long_hobbies >> process_segment >> end
+start >> process_event_streaming >> end

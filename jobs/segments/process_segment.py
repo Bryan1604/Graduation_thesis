@@ -4,7 +4,7 @@ from pyspark.sql.functions import reduce, col, expr
 import mysql.connector
 import json
 from jobs.segments.combile import combile_operator
-from jobs.utils.sqlUtils import config_cdp_db
+# from jobs.utils.sqlUtils import config_cdp_db
 
 # Database connection properties
 db_url = 'jdbc:mysql://192.168.10.134:3306/CDP_DB'

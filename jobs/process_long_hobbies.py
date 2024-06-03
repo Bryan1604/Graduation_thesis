@@ -2,7 +2,7 @@
 from pyspark.sql import SparkSession
 import mysql.connector
 from utils.sqlUtils import config_cdp_db
-from utils.esUtils import es,es_index
+from utils.esUtils import es,INDEX_NAME
 from datetime import datetime
 from pyspark.sql.functions import col, count, desc, collect_list, udf, lit
 from pyspark.sql.types import StringType
@@ -15,9 +15,9 @@ def join_strings(data, sep):
 if __name__ == "__main__":
     schedule_time = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-    events = es.search(index=es_index, body={"query" : {"match_all": {}}})
+    events = es.search(index=INDEX_NAME, body={"query" : {"match_all": {}}})
     # Truy vấn Elasticsearch để lấy các sự kiện sau thời gian cụ thể
-    latest_events = es.search(index=es_index, body={"query": {"range": {"time": {"gte": schedule_time.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]}}}})
+    latest_events = es.search(index=INDEX_NAME, body={"query": {"range": {"time": {"gte": schedule_time.strftime("%Y-%m-%d %H:%M:%S.%f")[:-3]}}}})
 
     # Tạo một phiên Spark
     spark = SparkSession.builder \

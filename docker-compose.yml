@@ -7,8 +7,13 @@ x-spark-common: &spark-common
     dockerfile: Dockerfile
   volumes:
     - ./jobs:/opt/bitnami/spark/jobs
+    # - ./spark/spark-defaults.conf:/opt/bitnami/spark/conf/spark-defaults.conf
+    # - ./spark/fairscheduler.xml:/opt/bitnami/spark/conf/fairscheduler.xml
     # - /Users/nghiann/Library/Python/3.11/lib/python/site-packages:/usr/local/lib/python3.11/site-packages
   command: bash -c "spark-submit"
+  environment:
+    - SPARK_MASTER_OPTS=-Dspark.scheduler.mode=FAIR
+    - SPARK_WORKER_OPTS=-Dspark.scheduler.mode=FAIR
   networks:
     - confluent
 
@@ -22,6 +27,7 @@ x-airflow-common: &airflow-common
     - ./jobs:/opt/airflow/jobs
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
+    - /var/run/docker.sock:/var/run/docker.sock
   depends_on:
     - postgres
   networks:
@@ -177,6 +183,7 @@ services:
   spark-master:
     <<: *spark-common
     container_name: spark-master
+    hostname: spark-master
     command: bin/spark-class org.apache.spark.deploy.master.Master
     ports:
       - "9090:8080"
@@ -187,6 +194,7 @@ services:
   spark-worker:
     <<: *spark-common
     container_name: spark-worker
+    hostname: spark-worker
     command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
       - spark-master
@@ -200,6 +208,7 @@ services:
   spark-worker-2:
     <<: *spark-common
     container_name: spark-worker-2
+    hostname: spark-worker-2
     command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
       - spark-master
@@ -269,6 +278,7 @@ services:
   db:
     image: mysql
     container_name: database
+    hostname: database
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 12345678
