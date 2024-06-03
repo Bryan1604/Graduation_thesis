@@ -6,7 +6,7 @@ from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOpe
 from datetime import datetime, timedelta
 
 dag = DAG(
-    dag_id = "sparking_flow",
+    dag_id = "batch_processing",
     default_args = {
         "owner": "LuongVu",
         "start_date": datetime(2024,6,3,0,0),
@@ -61,6 +61,7 @@ process_old_favorite_category = BashOperator(
     task_id='process_old_favorite_category',
     bash_command='docker exec spark-master spark-submit \
     --master spark://spark-master:7077 \
+    --executor-memory 2g \
     jobs/process_old_favorite_category.py',
     dag=dag,
 )
@@ -79,6 +80,7 @@ process_long_hobbies = BashOperator(
     task_id='process_long_hobbies',
     bash_command='docker exec spark-master spark-submit \
     --master spark://spark-master:7077 \
+    --executor-memory 2g \
     jobs/process_long_hobbies.py',
     dag=dag,
 )

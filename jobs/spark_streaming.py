@@ -6,23 +6,8 @@ from utils.sqlUtils import config_cdp_db
 from utils.esUtils import es, create_es_index, INDEX_NAME
 from extensions.json_extension import find_json_strings
 import json
-
-# def find_json_strings(data):
-#         json_strings = []
-#         start = data.find('{')
-#         while start != -1:
-#             counter = 1
-#             end = start + 1
-#             while counter > 0 and end < len(data):
-#                 if data[end] == '{':
-#                     counter += 1
-#                 elif data[end] == '}':
-#                     counter -= 1
-#                 end += 1
-#             if counter == 0:
-#                 json_strings.append(data[start:end])
-#             start = data.find('{', end)
-#         return json_strings
+from process_product_view import process_product_view
+from process_favorite_category import update_customer_category
 
 
 # # Hàm trích xuất dữ liệu người dùng từ JSON
@@ -111,6 +96,11 @@ def process_batch(df, batch_id):
                 }
             }
             print(event_data)
+            if( event_data["event_type"] != "purchase") :   
+                if (event_data["event_type"]  == "view") :
+                    process_product_view(event_data["user_id"], event_data["products"]["product_id"])
+                update_customer_category(event_data["user_id"], event_data["products"]["category"])
+            
             try:
                 es.index(index=INDEX_NAME, body=event_data)
                 print(f"document indexed successfully")

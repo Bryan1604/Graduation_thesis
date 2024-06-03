@@ -11,9 +11,9 @@ x-spark-common: &spark-common
     # - ./spark/fairscheduler.xml:/opt/bitnami/spark/conf/fairscheduler.xml
     # - /Users/nghiann/Library/Python/3.11/lib/python/site-packages:/usr/local/lib/python3.11/site-packages
   command: bash -c "spark-submit"
-  environment:
-    - SPARK_MASTER_OPTS=-Dspark.scheduler.mode=FAIR
-    - SPARK_WORKER_OPTS=-Dspark.scheduler.mode=FAIR
+  # environment:
+  #   - SPARK_MASTER_OPTS=-Dspark.scheduler.mode=FAIR
+    # - SPARK_WORKER_OPTS=-Dspark.scheduler.mode=FAIR
   networks:
     - confluent
 
@@ -28,6 +28,9 @@ x-airflow-common: &airflow-common
     - ./dags:/opt/airflow/dags
     - ./logs:/opt/airflow/logs
     - /var/run/docker.sock:/var/run/docker.sock
+  environment:
+    AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
+
   depends_on:
     - postgres
   networks:

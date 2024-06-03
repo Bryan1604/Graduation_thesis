@@ -106,8 +106,8 @@ const SegmentDetail = () => {
                         </div>
                     ))}
                 </div>
-                <h5>Thời gian khởi tạo : { segment.create_time ? formatDateTime(segment.created_at) : ""}</h5>
-                <h5>Thời gian cập nhật : {segment.update_time ? formatDateTime(segment.updated_at) : ""}</h5>
+                <h5>Thời gian khởi tạo : {formatDateTime(segment.created_at)}</h5>
+                <h5>Thời gian cập nhật : {formatDateTime(segment.updated_at)}</h5>
                 <h5>Tổng số khách hàng trong phân khúc: {customers.length} </h5>
             </div>
                 

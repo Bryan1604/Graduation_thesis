@@ -28,13 +28,13 @@ const SegmentList = () => {
     },
     {
       name: "Thời gian tạo",
-      selector: (row) => formatDateTime(row.create_time),
+      selector: (row) => formatDateTime(row.created_at),
       width: "20%",
       wrap: true,
     },
     {
       name: "Thời gian cập nhật",
-      selector: (row) => formatDateTime(row.update_time),
+      selector: (row) => formatDateTime(row.updated_at),
       width: "20%",
     },
     {

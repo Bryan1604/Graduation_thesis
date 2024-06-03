@@ -54,8 +54,7 @@ Note :
         - connect voi database mysql spark (??), su dung package cho spark-mysql
         - Loc theo dieu kien include
         - can chuong trinh theo doi hoat dong chay lien tuc  => khi khoi chay may chu spark -> cho chay luon ?? => deu can submit len spark ( co nen su dung file.sh)
-
-        
+ 
         
     Can lam luon :
 
@@ -104,4 +103,5 @@ các xử lý cần được chạy liên tục
 Chương trình xử lý batch , lập lịch hàng ngày :
 - process_long_hobbies
 - process_old_favorite_category
+chuong trinh chay 1h 1 lan
 - process_segment
