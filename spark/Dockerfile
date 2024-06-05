@@ -5,7 +5,8 @@ FROM --platform=linux/amd64 bitnami/spark:3.5
 ENV SPARK_HOME=/opt/bitnami/spark
 ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
 ENV IVY_HOME=/opt/bitnami/spark/.ivy2
-
+ENV SPARK_MASTER=yarn://namenode:8020
+ENV HADOOP_CONF_DIR=/opt/hadoop/etc/hadoop
 # Thiết lập thư mục làm việc
 WORKDIR /opt/bitnami/spark
 
@@ -24,8 +25,6 @@ RUN pip3 install --upgrade pip && pip install -r /opt/bitnami/spark/requirements
 
 # Tạo thư mục .ivy2 nếu chưa tồn tại
 RUN mkdir -p $IVY_HOME
-
-
 
 # Thiết lập lệnh khởi động
 ENTRYPOINT ["/opt/bitnami/scripts/spark/entrypoint.sh"]

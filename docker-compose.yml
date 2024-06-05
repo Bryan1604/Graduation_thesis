@@ -306,7 +306,7 @@ services:
       SPARK_MODE: worker
       SPARK_WORKER_CORES: 3
       SPARK_WORKER_MEMORY: 4g
-      SPARK_MASTER_URL: spark://spark-master:7077
+      SPARK_MASTER_URL: yarn spark://spark-master:7077
     platform: linux/amd64
 
   # spark:
