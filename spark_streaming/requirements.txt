@@ -1,8 +1,0 @@
-mysql-connector-python==8.4.0
-confluent_kafka==2.4.0
-py4j==0.10.9.7
-pyspark==3.5.0 
-elasticsearch==8.13.0
-PyMySQL==1.0.2
-mysql-connector==2.2.9
-elasticsearch

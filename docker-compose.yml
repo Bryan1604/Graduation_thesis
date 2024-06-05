@@ -175,73 +175,120 @@ services:
     platform: linux/amd64
 
   namenode:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: namenode
-    hostname: namenode
-    ports:
-      - "50070:50070"
-      - "9000:9000"
-    volumes:
-      - ./data/namenode:/usr/local/hadoop/hdfs/namenode
-    environment:
-      - CLUSTER_NAME=test-cluster
-    command: /usr/local/bin/start.sh namenode
-    networks:
-      - confluent
-    platform: linux/amd64
+      build: .
+      image: apache/hadoop:3.3.6
+      container_name: namenode
+      hostname: namenode
+      command: ["hdfs", "namenode"]
+      ports:
+        - 9870:9870
+      env_file:
+        - ./config
+      environment:
+          CLUSTER_NAME: hadoop-cluster
+          ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
+      # environment:
+      #   CLUSTER_NAME: hadoop-cluster
+      #   HADOOP_HOME: /opt/hadoop
+      #   HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
+      #   CORE_CONF_fs_defaultFS: hdfs://namenode:8020
+      # ports:
+      #   - "9870:9870"
+      #   - "8020:8020"
+      # volumes:
+      #   - ./configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      #   - ./configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      
+      platform: linux/amd64
 
-  datanode:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: datanode
-    hostname: datanode
-    ports:
-      - "50075:50075"
-    volumes:
-      - ./data/datanode:/usr/local/hadoop/hdfs/datanode
-    environment:
-      - CLUSTER_NAME=test-cluster
-    command: /usr/local/bin/start.sh datanode
-    networks:
-      - confluent
-    platform: linux/amd64
-
+  datanode-1:
+      build: .
+      image: apache/hadoop:3.3.6
+      container_name : datanode-1
+      command: ["hdfs", "datanode"]
+      env_file:
+        - ./config    
+      environment:
+        CLUSTER_NAME: hadoop-cluster
+      #   HADOOP_HOME: /opt/hadoop
+      #   HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
+      # ports:
+      #   - "9864:9864"
+      # volumes:
+      #   - ./configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      #   - ./configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+    
+      platform: linux/amd64 
+  datanode-2:
+      build: .
+      image: apache/hadoop:3.3.6
+      container_name : datanode-2
+      environment:
+        CLUSTER_NAME: hadoop-cluster
+      #   HADOOP_HOME: /opt/hadoop
+      #   HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
+      # ports:
+      #   - "9865:9865"
+      # volumes:
+      #   - ./configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      #   - ./configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      command: ["hdfs", "datanode"]
+      env_file:
+        - ./config  
+      platform: linux/amd64 
   resourcemanager:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: resourcemanager
-    hostname: resourcemanager
-    ports:
-      - "8088:8088"
-    command: /usr/local/bin/start.sh resourcemanager
-    networks:
-      - confluent
-    platform: linux/amd64
+      build: .
+      image: apache/hadoop:3.3.6
+      container_name: resourcemanager
+      command: ["yarn", "resourcemanager"]
+      ports:
+         - 8088:8088
+      env_file:
+        - ./config
+      volumes:
+        - ./test.sh:/opt/test.sh
+      environment:
+        CLUSTER_NAME: hadoop-cluster
+      #   HADOOP_HOME: /opt/hadoop
+      #   HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
+      #   YARN_CONF_yarn_resourcemanager_hostname: resourcemanager
+      # ports:
+      #   - "8088:8088"
+      # volumes:
+      #   - ./configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      #   - ./configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      #   - ./configs/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml
+      #   - ./configs/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml
+     
+      platform: linux/amd64
 
   nodemanager:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: nodemanager
-    hostname: nodemanager
-    ports:
-      - "8042:8042"
-    command: /usr/local/bin/start.sh nodemanager
-    networks:
-      - confluent
-    platform: linux/amd64
-  
+      build: .
+      image: apache/hadoop:3.3.6
+      command: ["yarn", "nodemanager"]
+      env_file:
+        - ./config
+      # container_name: nodemanager
+      environment:
+        CLUSTER_NAME: hadoop-cluster
+      #   HADOOP_HOME: /opt/hadoop
+      #   HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
+      # ports:
+      #   - "8042:8042"
+      # volumes:
+      #   - ./configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+      #   - ./configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+      #   - ./configs/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml
+      #   - ./configs/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml
+      networks:
+        - confluent
+        
+      platform: linux/amd64
   spark-master:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    <<: *spark-common
     container_name: spark-master
     hostname: spark-master
-    command: /usr/local/bin/start.sh spark-master
+    command: bin/spark-class org.apache.spark.deploy.master.Master
     ports:
       - "9090:8080"
       - "7077:7077"
@@ -249,41 +296,43 @@ services:
     platform: linux/amd64
 
   spark-worker:
-    build: 
-      context: .
-      dockerfile: Dockerfile
+    <<: *spark-common
     container_name: spark-worker
-    hostname: spark-worker-1
-    command: /usr/local/bin/start.sh spark-worker
-    ports:
-      - "8083:8083"
+    hostname: spark-worker
+    command: bin/spark-class org.apache.spark.deploy.worker.Worker spark://spark-master:7077
     depends_on:
       - spark-master
     environment:
       SPARK_MODE: worker
-      # SPARK_WORKER_CORES: 3
-      # SPARK_WORKER_MEMORY: 4g
+      SPARK_WORKER_CORES: 3
+      SPARK_WORKER_MEMORY: 4g
       SPARK_MASTER_URL: spark://spark-master:7077
     platform: linux/amd64
 
-  spark-worker-2:
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    container_name: spark-worker-2
-    hostname: spark-worker-2
-    command: /usr/local/bin/start.sh spark-worker
-    ports:
-      - "8084:8084"
-    depends_on:
-      - spark-master
-    environment:
-      SPARK_MODE: worker
-      # SPARK_WORKER_CORES: 3
-      # SPARK_WORKER_MEMORY: 4g
-      SPARK_MASTER_URL: spark://spark-master:7077
-    platform: linux/amd64
-  
+  # spark:
+  #   image: apache/spark:3.5.1
+  #   container_name: spark
+  #   environment:
+  #     SPARK_MODE: master
+  #     SPARK_MASTER_HOST: spark-master
+  #     HADOOP_HOME: /opt/hadoop
+  #     HADOOP_CONF_DIR: /opt/hadoop/etc/hadoop
+  #     SPARK_HOME: /opt/spark
+  #     SPARK_CONF_DIR: /opt/spark/conf
+  #   ports:
+  #     - "7077:7077"
+  #     - "8084:8084"
+  #   networks:
+  #     - confluent
+  #   volumes:
+  #     - ./configs/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
+  #     - ./configs/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml
+  #     - ./configs/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml
+  #     - ./configs/yarn-site.xml:/opt/hadoop/etc/hadoop/yarn-site.xml
+  #     - ./configs/mapred-site.xml:/opt/hadoop/etc/hadoop/mapred-site.xml
+  #   command: "/opt/spark/bin/spark-class org.apache.spark.deploy.master.Master --host spark-master"
+
+
   postgres:
     image: postgres:latest
     container_name: postgres
