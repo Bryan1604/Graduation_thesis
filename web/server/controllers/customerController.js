@@ -23,39 +23,43 @@ const customerController = {
     try {
       const { id } = req.params;
       const [customerRows, fields] = await connection_cdp.promise().query(
-        "select customers.*, (select count(product_id) from customer_product where customer_id = ?) as product_count,(select sum(view_count) from customer_product where customer_id = ?) as total_view_count from customers where customers.customer_id = ?", 
+        "select customers.*, (select count(product_id) from customer_product where customer_id = ?) as product_count,(select sum(view_count) from customer_product where customer_id = ?) as total_view_count from customers where customers.customer_id = ?",
         [id, id, id]
       );
       if (customerRows.length === 0) {
-      return res.status(404).json({ state: "error", message: "Customer not found" });
-    }
+        return res.status(404).json({ state: "error", message: "Customer not found" });
+      }
 
-    const customer = customerRows[0];
+      const customer = customerRows[0];
 
-    // Lấy danh sách sản phẩm yêu thích
-    const favoriteProductIds = customer.favorite_products ? customer.favorite_products.split(',') : [];
-    let favoriteProducts = [];
-    if (favoriteProductIds.length > 0) {
-      const [productRows] = await connection_cdp.promise().query(
-        "SELECT product_name FROM products WHERE product_id IN (?)",
-        [favoriteProductIds]
-      );
-      favoriteProducts = productRows.map(row => row.product_name);
-    }
-      
-    // Lay the loai yeu thich trong thoi gian gan day ( 3 ngay)
-    let favoriteCategories = [];
-    const [catrgoryRows] = await connection_cdp.promise().query(
-      "SELECT cate.* FROM categories as cate, customer_category as cc WHERE cate.category_id = cc.category_id AND cc.customer_id = ?", [customer.customer_id]
-    )
-      
-    favoriteCategories = catrgoryRows.map(row => row.category_name);
+      // Lấy danh sách sản phẩm yêu thích
+      const favoriteProductIds = customer.favorite_products ? customer.favorite_products.split(',') : [];
+      let favoriteProducts = [];
+      if (favoriteProductIds.length > 0) {
+        const [productRows] = await connection_cdp.promise().query(
+          "SELECT product_name FROM products WHERE product_id IN (?)",
+          [favoriteProductIds]
+        );
+        favoriteProducts = productRows.map(row => row.product_name);
+      }
 
-    res.json({
-      data: customer,
-      favoriteProducts: favoriteProducts,
-      favoriteCategories: favoriteCategories,
-    });
+      // Lay the loai yeu thich trong thoi gian gan day ( 3 ngay)
+      let favoriteCategories = [];
+      const [catrgoryRows] = await connection_cdp.promise().query(
+        "SELECT cate.* FROM categories as cate, customer_category as cc WHERE cate.category_id = cc.category_id AND cc.customer_id = ?", [customer.customer_id]
+      )
+      favoriteCategories = catrgoryRows.map(row => row.category_name);
+
+      const [segmentRows] = await connection_cdp.promise().query(
+        "SELECT segments.* FROM segments, customer_segment WHERE segments.segment_id = customer_segment.segment_id AND customer_segment.customer_id = ?", [customer.customer_id]
+      )
+
+      res.json({
+        data: customer,
+        favoriteProducts: favoriteProducts,
+        favoriteCategories: favoriteCategories,
+        segments: segmentRows
+      });
     } catch (error) {
       console.log(error);
       res.json({

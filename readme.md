@@ -47,18 +47,16 @@ Note :
         - spark streaming và đẩy dữ liệu lên elastic search
         - xử lý thông tin về sở thích ngắn hạn  ===> nen de la 1,2,3,4      
         - Xoa cac the loai yeu thich cu ( co thoi gian update qua 3 ngay truoc do)
+        - lập lịch bằng airlow và trigger được jobs
 
-    inprogress :  
-        - CONFIG AIRFLOW (UU TIEN CAO NHAT)
+    inprogress : 
+        - viet them lenh start.sh sau khi khoi dong thanh cong cac container
+        - sua lai thoi gian cap nhat cua segment
         - xoá nhưng thể loại không có cập nhât ( trong 3 ngay gan nhat) (tạo API,..  hay dung nhu long_hobbies)
         - connect voi database mysql spark (??), su dung package cho spark-mysql
         - Loc theo dieu kien include
         - can chuong trinh theo doi hoat dong chay lien tuc  => khi khoi chay may chu spark -> cho chay luon ?? => deu can submit len spark ( co nen su dung file.sh)
  
-        
-    Can lam luon :
-
-        - Khi co segment duoc tao moi hoac xoa -> goi toi airlow de chay code tao moi 1 segment
 
     todo :
         - sua lai API lay thong tin khach hang ( the loai yeu thich)

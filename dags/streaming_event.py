@@ -17,12 +17,19 @@ dag = DAG(
     catchup=False
 )
 
+start = PythonOperator(
+    task_id="start",
+    python_callable = lambda: print("Jobs started"),
+    dag=dag
+)
+
 # chay realtime
 process_favorite_category = BashOperator(
     task_id='process_favorite_category',
     bash_command='docker exec spark-master spark-submit \
     --master spark://spark-master:7077 \
     --executor-memory 2g \
+    --conf spark.cores.max=2 \
     --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
     jobs/process_favorite_category.py',
     dag=dag,
@@ -34,9 +41,20 @@ process_event_streaming = BashOperator(
     bash_command="""
         docker exec spark-master spark-submit \
         --master spark://spark-master:7077 \
+        --executor-memory 2g \
+        --conf spark.cores.max=2 \
         --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
         jobs/spark_streaming.py
     """,
+    dag=dag
 )
 
-process_event_streaming
+end = PythonOperator(
+    task_id="end",
+    python_callable = lambda: print("Jobs completed successfully"),
+    dag=dag
+)
+
+
+start >> [process_event_streaming,process_favorite_category] >> end
+# [process_favorite_category,process_event_streaming]

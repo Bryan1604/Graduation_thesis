@@ -96,10 +96,10 @@ def process_batch(df, batch_id):
                 }
             }
             print(event_data)
-            if( event_data["event_type"] != "purchase") :   
-                if (event_data["event_type"]  == "view") :
-                    process_product_view(event_data["user_id"], event_data["products"]["product_id"])
-                update_customer_category(event_data["user_id"], event_data["products"]["category"])
+            # if( event_data["event_type"] != "purchase") :   
+            if (event_data["event_type"]  == "view") :
+                process_product_view(event_data["user_id"], event_data["products"]["product_id"])
+                # update_customer_category(event_data["user_id"], event_data["products"]["category"])
             
             try:
                 es.index(index=INDEX_NAME, body=event_data)
@@ -136,3 +136,4 @@ if __name__ == "__main__":
         .start()
 
     query.awaitTermination()
+

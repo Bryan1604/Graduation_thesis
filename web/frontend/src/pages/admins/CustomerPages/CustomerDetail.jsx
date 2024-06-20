@@ -15,7 +15,7 @@ const CustomerDetail = () => {
     const [customer, setCustomer] = useState({});
     const [favoriteProducts, setFavoriteProducts] = useState([]);
     const [favoriteCategories, setFavoriteCategories] = useState([]);
-
+    const [segments, setSegments] = useState([]);
     const goBack = () => {
         navigate(-1);
     }
@@ -37,6 +37,7 @@ const CustomerDetail = () => {
                 setCustomer(data.data);
                 setFavoriteProducts(data.favoriteProducts);
                 setFavoriteCategories(data.favoriteCategories);
+                setSegments(data.segments);
             } catch (error) {
                 console.error("Error fetching customer list:", error);
             }
@@ -117,8 +118,8 @@ const CustomerDetail = () => {
                         </div>
                         
                     </div>
-                    <div class={cx("info")}>
-                        <div class={cx("info_item")}>
+                    <div className={cx("info")}>
+                        <div className={cx("info_item")}>
                             <div class={cx("info_item__title")}>Thông tin về các hoạt động </div>
                             <div class={cx("info_item__content")}>Số sản phẩm đã từng xem và quan tâm: {customer.product_count}</div>
                             <div class={cx("info_item__content")}>Tổng lượt xem các sản phẩm: {customer.total_view_count}</div>
@@ -126,6 +127,20 @@ const CustomerDetail = () => {
                             <div class={cx("info_item__content")}>Tổng giá trị các đơn hàng đã mua : {customer.total_purchase_value}</div>
                             <div class={cx("info_item__content")}>Trung bình giá trị của 1 đơn hàng đã mua : {customer.avg_purchase_value}</div>
                             <div class={cx("info_item__content")}>Giá trị đơn hàng tối thiểu : {customer.min_purchase_value}</div>
+                        </div>
+
+                        <div className={cx("info_item")}>
+                            <div className={cx("info_item__title")}>Khách hàng thuộc phân khúc</div>
+                            <div class={cx("info_item__content")}>
+                                {segments.map((segment, index) => (
+                                    <div key={index}>
+                                        -  
+                                        <a href={`/admin/segments/${segment.segment_id}`} target="_self" rel="noopener noreferrer" style={{ color: 'inherit', textDecoration: 'underline', fontStyle: 'italic' }}>
+                                            {segment.segment_name}
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>

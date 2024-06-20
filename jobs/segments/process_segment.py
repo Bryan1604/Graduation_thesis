@@ -4,10 +4,20 @@ from pyspark.sql.functions import reduce, col, expr
 import mysql.connector
 import json
 from jobs.segments.combile import combile_operator
-# from jobs.utils.sqlUtils import config_cdp_db
+import psutil
+import socket  # Add this line
+
+def get_ip_address(interface_name):
+    for interface, addrs in psutil.net_if_addrs().items():
+        if interface == interface_name:
+            for addr in addrs:
+                if addr.family == socket.AF_INET:
+                    return addr.address
+    return 'localhost'
 
 # Database connection properties
-db_url = 'jdbc:mysql://192.168.10.134:3306/CDP_DB'
+db_url = 'jdbc:mysql://' + '192.168.10.134' + ':3306/CDP_DB'
+
 db_properties = {
     'driver': 'com.mysql.cj.jdbc.Driver',
     'user': 'root',
@@ -16,7 +26,7 @@ db_properties = {
 
 # Thiết lập thông tin kết nối toi cdp database
 config_cdp_db = {
-    'host': '192.168.10.134',           
+    'host': '192.168.10.134',
     'user': 'root',                
     'password': '12345678',   
     'database': 'CDP_DB',    
