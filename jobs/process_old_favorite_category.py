@@ -6,14 +6,6 @@ import json
 from jobs.segments.combile import combile_operator
 from jobs.utils.sqlUtils import config_cdp_db
 
-# Thiết lập thông tin kết nối toi cdp database
-config_cdp_db = {
-    'host': '192.168.10.134',           
-    'user': 'root',                
-    'password': '12345678',   
-    'database': 'CDP_DB',    
-}
-
 if __name__ == "__main__":
     
     # connect to mysql cdp_db

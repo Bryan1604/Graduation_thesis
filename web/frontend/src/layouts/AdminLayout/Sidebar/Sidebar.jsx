@@ -58,7 +58,7 @@ function Sidebar({ setToggleButton }) {
   return (
     <div className={cx("wrapper")} style={{ width: `calc(230px - ${toggle.value}px)` }}>
       <nav>
-        <div className={cx("menuTopHeader")}>
+        {/* <div className={cx("menuTopHeader")}>
           <div className={cx("menuTopLogo")}>
             {!toggle.action && (
               <a href="/admin">
@@ -66,7 +66,7 @@ function Sidebar({ setToggleButton }) {
               </a>
             )}
           </div>
-        </div>
+        </div> */}
 
         <div className={cx("menuInnerWrapper")}>
           <div className={cx("menuPrimaryInner")}>

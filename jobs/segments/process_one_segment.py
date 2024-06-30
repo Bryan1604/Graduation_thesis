@@ -6,6 +6,7 @@ import json
 from jobs.segments.combile import combile_operator
 import psutil
 import socket  # Add this line
+import time
 
 def get_ip_address(interface_name):
     for interface, addrs in psutil.net_if_addrs().items():
@@ -16,7 +17,7 @@ def get_ip_address(interface_name):
     return 'localhost'
 
 # Database connection properties
-db_url = 'jdbc:mysql://' + '192.168.10.134' + ':3306/CDP_DB'
+db_url = 'jdbc:mysql://' + '192.168.12.103' + ':3306/CDP_DB'
 
 db_properties = {
     'driver': 'com.mysql.cj.jdbc.Driver',
@@ -26,7 +27,7 @@ db_properties = {
 
 # Thiết lập thông tin kết nối toi cdp database
 config_cdp_db = {
-    'host': '192.168.10.134',
+    'host': '192.168.12.103',
     'user': 'root',                
     'password': '12345678',   
     'database': 'CDP_DB',    
@@ -45,12 +46,10 @@ def load_df(table_name):
 def updateSegmentCustomer(customers, segmentId) :
     for customer in customers.collect():
         cdp_cursor.execute("INSERT INTO customer_segment (customer_id, segment_id) VALUES (%s, %s) ON DUPLICATE KEY UPDATE updated_at = CURRENT_TIMESTAMP ,customer_id = VALUES(customer_id), segment_id = VALUES(segment_id)", (customer['customer_id'], segmentId))
-    #cdp_cursor.execute("UPDATE segments SET updated_at= CURRENT_TIMESTAMP WHERE segment_id = %s", (segmentId,))
+    cdp_cursor.execute("UPDATE segments SET isNew = 0 WHERE segment_id = %s", (segmentId,))
     cdp_db.commit()
     print("Successfully updated customer_segment")
 
-#loc ra nhung khach hang co dieu kien thoa man phan khuc , lay 1 thong tin ve phan khuc
-#segmentsInfo la danh sach cac segment trong dastabase
 def filterCustomer(customerdf, segmentdf) :
     #xu ly
     for segment in segmentdf.collect():
@@ -74,10 +73,16 @@ if __name__ == "__main__":
     cdp_cursor = cdp_db.cursor()
 
     customerdf = load_df('customers')
-    segmentdf = load_df('segments')
+    segmentdf = load_df('segments').filter(col('isNew') == 1)
     if cdp_db.is_connected():
         try:
+            print('Điều kiện phân khúc')
+            segmentdf.select('rule').show(truncate=False)
+            start_time = time.time()
             filterCustomer(customerdf, segmentdf)
+            end_time = time.time()  # Lấy thời gian hiện tại sau khi chạy đoạn mã
+            elapsed_time = end_time - start_time 
+            print(f"Thời gian xử lý: {elapsed_time} giây")
         except mysql.connector.Error as err:
             print("Error:", err)
             cdp_db.rollback()

@@ -1,0 +1,60 @@
+## System Require
+- Docker >= 20.10
+- Docker compose plugin
+- Node >= 18.0
+
+## Setup and Configuration
+
+1. setup Docker containers:
+```bash
+docker compose up
+```
+
+
+2. Install dependencies:
+
+Vào thư mục web chạy back end và frontend 
+- front-end 
+```bash
+npm install
+npm run dev
+```
+- back-end
+```bash
+npm install
+npm start
+```
+
+## Usage
+
+To start the application locally, use the following command:
+
+```sh
+make devrun
+```
+
+run spark Streaming application :
+```sh
+docker exec -it spark-master spark-submit \
+    --master spark://spark-master:7077 \
+    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 jobs/spark_streaming.py
+
+docker exec -it spark-master spark-submit \
+    --master spark://spark-master:7077 \
+    --packages mysql:mysql-connector-java:8.0.28 jobs/segments/process_segment.py
+```
+The application will be accessible at:
+
+- Web: [http://localhost:3000](http://localhost:3030) (ecomerce)
+- Web: [http://localhost:3000](http://localhost:3030/admin) (manage)
+
+Stop application:
+
+```sh
+docker compose down
+```
+
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).

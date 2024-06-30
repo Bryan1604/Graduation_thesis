@@ -1,8 +1,5 @@
 from utils.sqlUtils import config_cdp_db
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col,from_json, udf, when
-from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
-from utils.sqlUtils import config_cdp_db
 import json
 import mysql.connector
 

@@ -1,11 +1,10 @@
 from pyspark.sql import SparkSession
-from elasticsearch import Elasticsearch
 from pyspark.sql.functions import col,from_json, udf, when
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, TimestampType
-from utils.sqlUtils import config_cdp_db
 from utils.esUtils import es, create_es_index, INDEX_NAME
 from extensions.json_extension import find_json_strings
 import json
+import time
 from process_product_view import process_product_view
 from process_favorite_category import update_customer_category
 
@@ -70,7 +69,6 @@ def process_batch(df, batch_id):
         data = row["value"]
         split_data = data.split('\t')
         clean_data = [item.strip() for item in split_data if item]
-        
         jsonStrings = find_json_strings(data)
 
         user_info = json.loads(jsonStrings[0])["data"][2]["data"] if len(jsonStrings) > 0 and len(json.loads(jsonStrings[0])["data"]) > 2 else {}
@@ -98,9 +96,12 @@ def process_batch(df, batch_id):
             print(event_data)
             # if( event_data["event_type"] != "purchase") :   
             if (event_data["event_type"]  == "view") :
+                # start_time = time.time()
                 process_product_view(event_data["user_id"], event_data["products"]["product_id"])
-                # update_customer_category(event_data["user_id"], event_data["products"]["category"])
-            
+                ## update_customer_category(event_data["user_id"], event_data["products"]["category"])
+                # end_time = time.time()
+                # elapsed_time = end_time - start_time 
+                # print(f"Thời gian xử lý 1 sự kiện: {elapsed_time} giây")
             try:
                 es.index(index=INDEX_NAME, body=event_data)
                 print(f"document indexed successfully")

@@ -46,7 +46,7 @@ const segmentController = {
       const AIRFLOW_USERNAME = 'admin';
       const AIRFLOW_PASSWORD = 'admin';
 
-      const DAG_ID = 'update_segment';
+      const DAG_ID = 'process_one_segment';
       
       try {
         // Gửi yêu cầu HTTP POST đến API của Airflow để trigger DAG

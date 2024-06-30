@@ -30,7 +30,7 @@ process_favorite_category = BashOperator(
     --master spark://spark-master:7077 \
     --executor-memory 2g \
     --conf spark.cores.max=2 \
-    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
+    --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,mysql:mysql-connector-java:8.0.28 \
     jobs/process_favorite_category.py',
     dag=dag,
 )
@@ -43,7 +43,7 @@ process_event_streaming = BashOperator(
         --master spark://spark-master:7077 \
         --executor-memory 2g \
         --conf spark.cores.max=2 \
-        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0 \
+        --packages org.apache.spark:spark-sql-kafka-0-10_2.12:3.5.0,mysql:mysql-connector-java:8.0.28 \
         jobs/spark_streaming.py
     """,
     dag=dag
